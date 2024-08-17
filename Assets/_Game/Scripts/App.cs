@@ -1,4 +1,6 @@
-﻿using TMPro;
+﻿using System;
+using System.Security.Cryptography;
+using TMPro;
 using UnityEngine;
 
 namespace _Game.Scripts {
@@ -9,13 +11,32 @@ namespace _Game.Scripts {
         [SerializeField] private PhysicMaterial _levelMaterial;
         [SerializeField] private TextMeshProUGUI _stateText;
 
+        private PlayerController _player;
+
         private void Start() {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
-            var player = Instantiate(_playerPrefab, _playerSpawn);
-            player.Init(_stateText);
             LevelUtils.SetMaterial(_levelRoot, _levelMaterial);
+
+            StartGame();
+        }
+
+        private void StartGame() {
+            _player = Instantiate(_playerPrefab, _playerSpawn);
+            _player.Init(_stateText);
+        }
+
+        private void EndGame() {
+            Destroy(_player.gameObject);
+            _player = null;
+        }
+
+        private void Update() {
+            if (Input.GetButtonDown("Restart")) {
+                EndGame();
+                StartGame();
+            }
         }
     }
 }
