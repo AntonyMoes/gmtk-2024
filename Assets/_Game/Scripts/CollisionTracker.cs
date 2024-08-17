@@ -5,6 +5,7 @@ using UnityEngine;
 namespace _Game.Scripts {
     public class CollisionTracker : MonoBehaviour {
         [SerializeField] private Collider _collider;
+        [SerializeField] private Color _gizmoColor = Color.black;
 
         private readonly HashSet<Collider> _ignored = new HashSet<Collider>();
         private readonly HashSet<Collider> _collisions = new HashSet<Collider>();
@@ -28,13 +29,21 @@ namespace _Game.Scripts {
             }
         }
 
-        private Vector3 _p;
-        private Vector3 _n;
-
+        private readonly List<Contact> _lastContacts = new List<Contact>();
+        private readonly List<Contact> _contacts = new List<Contact>();
         private void OnDrawGizmos() {
-            Gizmos.color = Color.black;
-            Gizmos.DrawSphere(_p, .2f);
-            Gizmos.DrawLine(_p, _p + _n);
+            Gizmos.color = _gizmoColor;
+
+            if (_contacts.Count > 0) {
+                _lastContacts.Clear();
+                _lastContacts.AddRange(_contacts);
+                _contacts.Clear();
+            }
+
+            foreach (var contact in _lastContacts) {
+                Gizmos.DrawSphere(contact.Point, .2f);
+                Gizmos.DrawLine(contact.Point, contact.Point + contact.Normal);
+            }
         }
 
         private readonly RaycastHit[] _hitBuffer = new RaycastHit[10];
@@ -55,13 +64,12 @@ namespace _Game.Scripts {
                     continue;
                 }
 
-                _p = hit.point;
-                _n = hit.normal;
-
-                return new Contact {
+                var contact = new Contact {
                     Point = hit.point,
                     Normal = hit.normal
                 };
+                _contacts.Add(contact);
+                return contact;
             }
 
             throw new Exception();

@@ -14,6 +14,8 @@ namespace _Game.Scripts {
         [SerializeField] private float _jumpForce;
         [SerializeField] private float _maxSlope;
         [SerializeField] private CollisionTracker _groundCollisionTracker;
+        [SerializeField] private CollisionTracker _anyCollisionTracker;
+        [SerializeField] private CollisionTracker _wallCollisionTracker;
 
         private TextMeshProUGUI _stateText;
 
@@ -73,31 +75,47 @@ namespace _Game.Scripts {
                 Jump();
             }
         }
-
+        
         private void Move(Vector3 speed, float deltaTime) {
-            Contact lowest = null;
-            foreach (var collision in _groundCollisionTracker.Collisions) {
-                var contact = _groundCollisionTracker.GetContact(collision);
-                if ((lowest == null || contact.Point.y < lowest.Point.y) &&
-                    (collision.attachedRigidbody == null || collision.attachedRigidbody.mass > _rb.mass)) {
-                    lowest = contact;
+            // if (_state == State.Falling) {
+            //     return;
+            // }
+
+            if (_state == State.Grounded) {
+                Contact lowest = null;
+                foreach (var collision in _groundCollisionTracker.Collisions) {
+                    var contact = _groundCollisionTracker.GetContact(collision);
+                    if ((lowest == null || contact.Point.y < lowest.Point.y) &&
+                        (collision.attachedRigidbody == null || collision.attachedRigidbody.mass > _rb.mass)) {
+                        lowest = contact;
+                    }
+                }
+
+                if (lowest != null && Vector3.Angle(lowest.Normal, Vector3.up) <= _maxSlope) {
+                    var moveRotation = Quaternion.FromToRotation(Vector3.up, lowest.Normal);
+                    speed = moveRotation * speed;
                 }
             }
 
-            if (lowest != null && Vector3.Angle(lowest.Normal, Vector3.up) <= _maxSlope) {
-                var moveRotation = Quaternion.FromToRotation(Vector3.up, lowest.Normal);
-                speed = moveRotation * speed;
+            
+            foreach (var wallCollision in _wallCollisionTracker.Collisions) {
+                var contact = _wallCollisionTracker.GetContact(wallCollision);
+                var reverseSpeed = -speed;
+                if (Vector3.Angle(reverseSpeed, contact.Normal) < 90) {
+                    speed += Vector3.Project(reverseSpeed, contact.Normal);
+                } 
             }
 
             // TODO this shit helps traverse slopes and edges but is really bad when walls
-            // _rb.MovePosition(_rb.position + speed * deltaTime);
+            _rb.MovePosition(_rb.position + speed * deltaTime);
 
-            var vertical = _state == State.Grounded && speed == Vector3.zero ? 0f : _rb.velocity.y;
-            _rb.velocity = new Vector3(speed.x, vertical, speed.z);
+            // var vertical = _state == State.Grounded && speed == Vector3.zero ? 0f : _rb.velocity.y;
+            // _rb.velocity = new Vector3(speed.x, vertical, speed.z);
+            // _lastSetVel = new Vector3(speed.x, vertical, speed.z);
 
-            // if (_state == State.Grounded) {
-            //     _rb.velocity = Vector3.zero;
-            // }
+            if (_state == State.Grounded) {
+                _rb.velocity = Vector3.zero;
+            }
         }
 
         private void Rotate(float rotation) {
@@ -113,12 +131,39 @@ namespace _Game.Scripts {
             }
         }
 
+        private bool CheckGroundCollision() {
+            // return _groundCollisionTracker.Collisions.Any();
+            
+            foreach (var collision in _groundCollisionTracker.Collisions) {
+                var contact = _groundCollisionTracker.GetContact(collision);
+                var angle = Vector3.Angle(Vector3.up, contact.Normal);
+                if (angle <= _maxSlope) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
+        private bool CheckSlidingCollision() {
+            foreach (var collision in _anyCollisionTracker.Collisions) {
+                var contact = _anyCollisionTracker.GetContact(collision);
+                var angle = Vector3.Angle(Vector3.up, contact.Normal);
+                if (angle < 90 && angle > _maxSlope) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private State GetState(State current) {
             switch (current) {
                 case State.None:
                 case State.Grounded:
                 case State.Falling:
-                    return CheckGroundCollision() ? State.Grounded : State.Falling;
+                case State.Sliding:
+                    return CheckGroundCollision() ? State.Grounded : /*CheckSlidingCollision() ? State.Sliding :*/ State.Falling;
                 case State.Jumping:
                     return _rb.velocity.y > 0 ? State.Jumping : GetState(State.Falling);
                 default:
@@ -150,12 +195,17 @@ namespace _Game.Scripts {
         private enum State {
             None,
             Grounded,
+            Sliding,
             Jumping,
             Falling
         }
 
-        private bool CheckGroundCollision() {
-            return _groundCollisionTracker.Collisions.Any();
+        private Vector3 _lastSetVel;
+        private void OnDrawGizmos() {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, transform.position + _lastSetVel);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(transform.position, transform.position + _rb.velocity);
         }
     }
 }
