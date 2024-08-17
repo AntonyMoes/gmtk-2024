@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace _Game.Scripts {
     public class PlayerController : MonoBehaviour {
-        // [SerializeField] private CharacterController _characterController;
         [SerializeField] private Rigidbody _rb;
         [SerializeField] private Collider _collider;
         [SerializeField] private float _movementSpeed;
@@ -14,28 +13,35 @@ namespace _Game.Scripts {
         [SerializeField] private float _verticalRotationSpeed;
         [SerializeField] private float _jumpForce;
         [SerializeField] private float _maxSlope;
-        [SerializeField] private TextMeshProUGUI _stateText;
-        [SerializeField] private CollisionTracker _collisionTracker;
+        [SerializeField] private CollisionTracker _groundCollisionTracker;
+
+        private TextMeshProUGUI _stateText;
 
         private State _state = State.None;
         private Vector2 _moveInput;
+        private bool _jumpInput;
+
+        public void Init(TextMeshProUGUI stateText) {
+            _stateText = stateText;
+        }
 
         private void Start() {
-            Cursor.visible = false;
-            _collisionTracker.Ignore(_collider);
+            _groundCollisionTracker.Ignore(_collider);
             SetState(State.Grounded);
         }
 
         private void Update() {
-            var deltaTime = Time.deltaTime;
+            UpdateInputs();
+        }
 
+        private void FixedUpdate() {
             var state = GetState(_state);
             SetState(state);
 
-            UpdateMovement(deltaTime);
+            UpdateMovement();
         }
 
-        private void UpdateMovement(float deltaTime) {
+        private void UpdateInputs() {
             var horizontalInput = Input.GetAxisRaw("Horizontal");
             var verticalInput = Input.GetAxisRaw("Vertical");
             _moveInput = new Vector2(horizontalInput, verticalInput);
@@ -52,25 +58,28 @@ namespace _Game.Scripts {
             var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + deltaVerticalRotation, -90, 90);
             _camera.transform.localRotation = Quaternion.Euler(newVerticalRotation, 0, 0);
 
-            var jump = Input.GetButtonDown("Jump");
-            if (jump) {
-                Jump();
-            }
+            _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
         }
 
-        private void FixedUpdate() {
+        private void UpdateMovement() {
             var currentDirection = Quaternion.FromToRotation(Vector3.forward, transform.forward);
             var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
             var movementSpeedRotated = currentDirection * movementSpeed;
 
             Move(movementSpeedRotated, Time.fixedDeltaTime);
+
+            if (_jumpInput) {
+                _jumpInput = false;
+                Jump();
+            }
         }
 
         private void Move(Vector3 speed, float deltaTime) {
             Contact lowest = null;
-            foreach (var collision in _collisionTracker.Collisions) {
-                var contact = _collisionTracker.GetContact(collision);
-                if (lowest == null || contact.Point.y < lowest.Point.y) {
+            foreach (var collision in _groundCollisionTracker.Collisions) {
+                var contact = _groundCollisionTracker.GetContact(collision);
+                if ((lowest == null || contact.Point.y < lowest.Point.y) &&
+                    (collision.attachedRigidbody == null || collision.attachedRigidbody.mass > _rb.mass)) {
                     lowest = contact;
                 }
             }
@@ -79,11 +88,16 @@ namespace _Game.Scripts {
                 var moveRotation = Quaternion.FromToRotation(Vector3.up, lowest.Normal);
                 speed = moveRotation * speed;
             }
-            
+
+            // TODO this shit helps traverse slopes and edges but is really bad when walls
             // _rb.MovePosition(_rb.position + speed * deltaTime);
 
             var vertical = _state == State.Grounded && speed == Vector3.zero ? 0f : _rb.velocity.y;
             _rb.velocity = new Vector3(speed.x, vertical, speed.z);
+
+            // if (_state == State.Grounded) {
+            //     _rb.velocity = Vector3.zero;
+            // }
         }
 
         private void Rotate(float rotation) {
@@ -100,7 +114,6 @@ namespace _Game.Scripts {
         }
 
         private State GetState(State current) {
-
             switch (current) {
                 case State.None:
                 case State.Grounded:
@@ -126,6 +139,9 @@ namespace _Game.Scripts {
 
             _state = state;
             _rb.useGravity = state != State.Grounded;
+            // if (_state == State.Grounded) {
+            //     _rb.velocity = Vector3.zero;
+            // }
             // _rb.isKinematic = state == State.Grounded;
             // _collider.enabled = state != State.Grounded;
             // _characterController.enabled = state == State.Grounded;
@@ -139,7 +155,7 @@ namespace _Game.Scripts {
         }
 
         private bool CheckGroundCollision() {
-            return _collisionTracker.Collisions.Any();
+            return _groundCollisionTracker.Collisions.Any();
         }
     }
 }
