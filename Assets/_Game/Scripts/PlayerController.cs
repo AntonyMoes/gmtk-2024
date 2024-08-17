@@ -57,11 +57,11 @@ namespace _Game.Scripts {
             var verticalInput = Input.GetAxisRaw("Vertical");
             _moveInput = new Vector2(horizontalInput, verticalInput);
 
-            var horizontalRotationInput = Input.GetAxisRaw("Mouse X");
+            var horizontalRotationInput = Input.GetAxis("Mouse X");
             var horizontalRotation = horizontalRotationInput * _horizontalRotationSpeed /** deltaTime*/;
             Rotate(horizontalRotation);
 
-            var verticalRotationInput = -Input.GetAxisRaw("Mouse Y");
+            var verticalRotationInput = -Input.GetAxis("Mouse Y");
             var deltaVerticalRotation = verticalRotationInput * _verticalRotationSpeed /** deltaTime*/;
 
             var verticalRotation = _camera.transform.localRotation.eulerAngles.x;
