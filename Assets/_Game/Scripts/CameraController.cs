@@ -1,5 +1,4 @@
-﻿using System;
-using GeneralUtils;
+﻿using GeneralUtils;
 using UnityEngine;
 
 namespace _Game.Scripts {
@@ -8,15 +7,12 @@ namespace _Game.Scripts {
         [SerializeField] [Range(0f, 1f)] private float _lerp;
 
         private Transform _target;
-        private float _verticalRotation;
 
-        public void Init(Transform target) {
+        public float VerticalRotation { get; set; }
+
+        public void SetTarget(Transform target) {
             _target = target;
             UpdateValues(1f);
-        }
-
-        public void SetVerticalRotation(float verticalRotation) {
-            _verticalRotation = verticalRotation;
         }
 
         private void LateUpdate() {
@@ -26,7 +22,7 @@ namespace _Game.Scripts {
         private void UpdateValues(float lerp) {
             var t = _camera.transform;
             t.position = Vector3.Lerp(t.position, _target.position, lerp);
-            t.rotation = Quaternion.Euler(_target.rotation.eulerAngles.With(x: _verticalRotation));
+            t.rotation = Quaternion.Euler(_target.rotation.eulerAngles.With(x: VerticalRotation));
         }
     }
 }
