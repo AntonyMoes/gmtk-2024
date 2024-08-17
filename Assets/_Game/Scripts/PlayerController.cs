@@ -13,11 +13,17 @@ namespace _Game.Scripts {
         [SerializeField] private float _verticalRotationSpeed;
         [SerializeField] private float _jumpForce;
         [SerializeField] private float _maxSlope;
-        [SerializeField] private TextMeshProUGUI _stateText;
         [SerializeField] private CollisionTracker _groundCollisionTracker;
+
+        private TextMeshProUGUI _stateText;
 
         private State _state = State.None;
         private Vector2 _moveInput;
+        private bool _jumpInput;
+
+        public void Init(TextMeshProUGUI stateText) {
+            _stateText = stateText;
+        }
 
         private void Start() {
             _groundCollisionTracker.Ignore(_collider);
@@ -25,15 +31,17 @@ namespace _Game.Scripts {
         }
 
         private void Update() {
-            var deltaTime = Time.deltaTime;
+            UpdateInputs();
+        }
 
+        private void FixedUpdate() {
             var state = GetState(_state);
             SetState(state);
 
-            UpdateMovement(deltaTime);
+            UpdateMovement();
         }
 
-        private void UpdateMovement(float deltaTime) {
+        private void UpdateInputs() {
             var horizontalInput = Input.GetAxisRaw("Horizontal");
             var verticalInput = Input.GetAxisRaw("Vertical");
             _moveInput = new Vector2(horizontalInput, verticalInput);
@@ -50,18 +58,20 @@ namespace _Game.Scripts {
             var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + deltaVerticalRotation, -90, 90);
             _camera.transform.localRotation = Quaternion.Euler(newVerticalRotation, 0, 0);
 
-            var jump = Input.GetButtonDown("Jump");
-            if (jump) {
-                Jump();
-            }
+            _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
         }
 
-        private void FixedUpdate() {
+        private void UpdateMovement() {
             var currentDirection = Quaternion.FromToRotation(Vector3.forward, transform.forward);
             var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
             var movementSpeedRotated = currentDirection * movementSpeed;
 
             Move(movementSpeedRotated, Time.fixedDeltaTime);
+
+            if (_jumpInput) {
+                _jumpInput = false;
+                Jump();
+            }
         }
 
         private void Move(Vector3 speed, float deltaTime) {

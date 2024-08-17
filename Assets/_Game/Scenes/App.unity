@@ -1414,6 +1414,7 @@ MonoBehaviour:
   _playerPrefab: {fileID: 4546339518295911044, guid: 2d8afcdcead63a4478432b73903a44e9, type: 3}
   _levelRoot: {fileID: 346645197}
   _levelMaterial: {fileID: 13400000, guid: e1d07c7bf6fc7db4d8d9702161412697, type: 2}
+  _stateText: {fileID: 1000091518}
 --- !u!1 &1130052530
 GameObject:
   m_ObjectHideFlags: 0
