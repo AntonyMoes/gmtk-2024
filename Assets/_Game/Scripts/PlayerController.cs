@@ -7,7 +7,7 @@ namespace _Game.Scripts {
     public class PlayerController : MonoBehaviour {
         [SerializeField] private Rigidbody _rb;
         [SerializeField] private Collider _collider;
-        [SerializeField] private Camera _camera;
+        [SerializeField] private Transform _cameraTarget;
         [SerializeField] private CollisionTracker _groundCollisionTracker;
 
         [Header("Settings")] [SerializeField] private float _movementSpeed;
@@ -20,17 +20,19 @@ namespace _Game.Scripts {
         [SerializeField] [Range(0f, 1f)] private float _slideManeuverability;
         [SerializeField] private float _maxSlope;
 
+        private CameraController _camera;
         private TextMeshProUGUI _stateText;
 
         private State _state = State.None;
         private Vector2 _moveInput;
         private bool _jumpInput;
 
-
         private Contact _slidingContact;
         private Vector3 _velocity;
 
-        public void Init(TextMeshProUGUI stateText) {
+        public void Init(CameraController camera, TextMeshProUGUI stateText) {
+            _camera = camera;
+            _camera.Init(_cameraTarget);
             _stateText = stateText;
         }
 
@@ -65,7 +67,7 @@ namespace _Game.Scripts {
             var verticalRotation = _camera.transform.localRotation.eulerAngles.x;
             var adjustedVerticalRotation = verticalRotation > 180 ? verticalRotation - 360 : verticalRotation;
             var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + deltaVerticalRotation, -90, 90);
-            _camera.transform.localRotation = Quaternion.Euler(newVerticalRotation, 0, 0);
+            _camera.SetVerticalRotation(newVerticalRotation);
 
             _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
         }

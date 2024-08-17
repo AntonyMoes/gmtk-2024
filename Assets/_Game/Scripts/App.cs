@@ -6,6 +6,7 @@ using UnityEngine;
 namespace _Game.Scripts {
     public class App : MonoBehaviour {
         [SerializeField] private Transform _playerSpawn;
+        [SerializeField] private CameraController _camera;
         [SerializeField] private PlayerController _playerPrefab;
         [SerializeField] private Transform _levelRoot;
         [SerializeField] private PhysicMaterial _levelMaterial;
@@ -24,7 +25,7 @@ namespace _Game.Scripts {
 
         private void StartGame() {
             _player = Instantiate(_playerPrefab, _playerSpawn);
-            _player.Init(_stateText);
+            _player.Init(_camera, _stateText);
         }
 
         private void EndGame() {
