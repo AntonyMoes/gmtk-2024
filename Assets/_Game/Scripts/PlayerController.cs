@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace _Game.Scripts {
     public class PlayerController : MonoBehaviour {
-        // [SerializeField] private CharacterController _characterController;
         [SerializeField] private Rigidbody _rb;
         [SerializeField] private Collider _collider;
         [SerializeField] private float _movementSpeed;
@@ -15,14 +14,13 @@ namespace _Game.Scripts {
         [SerializeField] private float _jumpForce;
         [SerializeField] private float _maxSlope;
         [SerializeField] private TextMeshProUGUI _stateText;
-        [SerializeField] private CollisionTracker _collisionTracker;
+        [SerializeField] private CollisionTracker _groundCollisionTracker;
 
         private State _state = State.None;
         private Vector2 _moveInput;
 
         private void Start() {
-            Cursor.visible = false;
-            _collisionTracker.Ignore(_collider);
+            _groundCollisionTracker.Ignore(_collider);
             SetState(State.Grounded);
         }
 
@@ -68,9 +66,10 @@ namespace _Game.Scripts {
 
         private void Move(Vector3 speed, float deltaTime) {
             Contact lowest = null;
-            foreach (var collision in _collisionTracker.Collisions) {
-                var contact = _collisionTracker.GetContact(collision);
-                if (lowest == null || contact.Point.y < lowest.Point.y) {
+            foreach (var collision in _groundCollisionTracker.Collisions) {
+                var contact = _groundCollisionTracker.GetContact(collision);
+                if ((lowest == null || contact.Point.y < lowest.Point.y) &&
+                    (collision.attachedRigidbody == null || collision.attachedRigidbody.mass > _rb.mass)) {
                     lowest = contact;
                 }
             }
@@ -79,11 +78,16 @@ namespace _Game.Scripts {
                 var moveRotation = Quaternion.FromToRotation(Vector3.up, lowest.Normal);
                 speed = moveRotation * speed;
             }
-            
+
+            // TODO this shit helps traverse slopes and edges but is really bad when walls
             // _rb.MovePosition(_rb.position + speed * deltaTime);
 
             var vertical = _state == State.Grounded && speed == Vector3.zero ? 0f : _rb.velocity.y;
             _rb.velocity = new Vector3(speed.x, vertical, speed.z);
+
+            // if (_state == State.Grounded) {
+            //     _rb.velocity = Vector3.zero;
+            // }
         }
 
         private void Rotate(float rotation) {
@@ -100,7 +104,6 @@ namespace _Game.Scripts {
         }
 
         private State GetState(State current) {
-
             switch (current) {
                 case State.None:
                 case State.Grounded:
@@ -126,6 +129,9 @@ namespace _Game.Scripts {
 
             _state = state;
             _rb.useGravity = state != State.Grounded;
+            // if (_state == State.Grounded) {
+            //     _rb.velocity = Vector3.zero;
+            // }
             // _rb.isKinematic = state == State.Grounded;
             // _collider.enabled = state != State.Grounded;
             // _characterController.enabled = state == State.Grounded;
@@ -139,7 +145,7 @@ namespace _Game.Scripts {
         }
 
         private bool CheckGroundCollision() {
-            return _collisionTracker.Collisions.Any();
+            return _groundCollisionTracker.Collisions.Any();
         }
     }
 }
