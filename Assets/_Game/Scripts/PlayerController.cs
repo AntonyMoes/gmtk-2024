@@ -10,12 +10,12 @@ namespace _Game.Scripts {
         [SerializeField] private Camera _camera;
         [SerializeField] private CollisionTracker _groundCollisionTracker;
 
-        [Header("Settings")]
-        [SerializeField] private float _movementSpeed;
+        [Header("Settings")] [SerializeField] private float _movementSpeed;
         [SerializeField] private float _horizontalRotationSpeed;
         [SerializeField] private float _verticalRotationSpeed;
         [SerializeField] private float _jumpForce;
         [SerializeField] private float _gravity;
+        [SerializeField] private float _fallGravityMultiplier;
         [SerializeField] [Range(0f, 1f)] private float _jumpManeuverability;
         [SerializeField] [Range(0f, 1f)] private float _slideManeuverability;
         [SerializeField] private float _maxSlope;
@@ -93,7 +93,8 @@ namespace _Game.Scripts {
             Move(newVelocity, Time.fixedDeltaTime);
 
             if (CanFall()) {
-                _velocity.y -= _gravity * deltaTime;
+                var gravity = _state == State.Falling ? _fallGravityMultiplier * _gravity : _gravity;
+                _velocity.y -= gravity * deltaTime;
             } else {
                 _velocity.y = 0;
             }
@@ -142,6 +143,7 @@ namespace _Game.Scripts {
                 case State.Sliding:
                     var normal = _state == State.Sliding ? _slidingContact.Normal : Vector3.up;
                     SetState(State.Jumping);
+                    _velocity.y = 0;
                     _velocity += normal * _jumpForce;
                     break;
             }
@@ -179,8 +181,8 @@ namespace _Game.Scripts {
                 case State.Falling:
                 case State.Sliding:
                     return CheckGroundCollision()
-                        ? State.Grounded :
-                        CheckSlidingCollision()
+                        ? State.Grounded
+                        : CheckSlidingCollision()
                             ? State.Sliding
                             : State.Falling;
                 case State.Jumping:
@@ -224,6 +226,7 @@ namespace _Game.Scripts {
         }
 
         private Vector3 _lastSetVel;
+
         private void OnDrawGizmos() {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, transform.position + _velocity);
