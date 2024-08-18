@@ -56,8 +56,9 @@ namespace _Game.Scripts {
             var from = _collider.bounds.center;
             var point = other.ClosestPoint(from);
             point = point == from ? other.ClosestPointOnBounds(from) : point;
-            var vector = point - from;
-            var hitCount = Physics.RaycastNonAlloc(from, vector * 1.1f, _hitBuffer);
+
+            var vector = (point - from) + 0.1f * (other.bounds.center - from);
+            var hitCount = Physics.RaycastNonAlloc(from, vector, _hitBuffer);
             for (var i = 0; i < hitCount; i++) {
                 var hit = _hitBuffer[i];
                 if (hit.collider != other) {
@@ -71,7 +72,6 @@ namespace _Game.Scripts {
                 _contacts.Add(contact);
                 return contact;
             }
-
             throw new Exception();
         }
 

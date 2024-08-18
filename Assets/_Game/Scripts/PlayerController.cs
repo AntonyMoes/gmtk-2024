@@ -225,14 +225,17 @@ namespace _Game.Scripts {
         }
 
         private bool CheckGroundCollision() {
+            var _oldVelocity = _velocity;
+            _velocity = Vector3.zero;
             foreach (var collision in _groundCollisionTracker.Collisions) {
                 var contact = _groundCollisionTracker.GetContact(collision);
                 var angle = Vector3.Angle(Vector3.up, contact.Normal);
                 if (angle <= _maxSlope) {
+                    _velocity = _oldVelocity;
                     return true;
                 }
             }
-
+            _velocity = _oldVelocity;
             return false;
         }
 
