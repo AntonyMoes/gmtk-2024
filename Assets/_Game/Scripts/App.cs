@@ -26,7 +26,7 @@ namespace _Game.Scripts {
         private void StartGame() {
             _player = Instantiate(_playerPrefab, _playerSpawn);
             _player.Init(_camera, _stateText);
-            SoundController.Instance.PlayMusic("1 - The Bottom", 0.5f);
+            SoundController.Instance.PlayMusic("1_the_bottom", 0.5f);
         }
 
         private void EndGame() {

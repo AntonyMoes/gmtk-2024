@@ -184,7 +184,7 @@ namespace _Game.Scripts {
                 case State.Sliding:
                     var normal = _state.Value == State.Sliding ? _slidingContact.Normal : Vector3.up;
                     SetState(State.Jumping);
-                    SoundController.Instance.PlaySound(isMetalGround() ? "jump_metal_temp": "jump_default_temp", 0.1f);
+                    SoundController.Instance.PlaySound(isMetalGround() ? "jump_metal": "jump_default", 0.1f);
                     _velocity.y = 0;
                     _velocity += normal * _jumpForce;
                     break;
@@ -273,7 +273,7 @@ namespace _Game.Scripts {
             } else if (_state.Value == State.NoClip) {
                 SoundController.Instance.StopSound("noclip", 0.5f);
             } else if (_state.Value == State.Falling) {
-                SoundController.Instance.StopSound("falling", 0.5f);
+                SoundController.Instance.StopSound("fall", 0.5f);
             }
             
             // Transition to state
@@ -286,7 +286,7 @@ namespace _Game.Scripts {
                 }
             }
             else if (state == State.Falling) {
-                SoundController.Instance.PlaySound("falling", 0f, 1.5f, false, true).DOFade(0.08f, 5f);
+                SoundController.Instance.PlaySound("fall", 0f, 1.5f, false, true).DOFade(0.08f, 5f);
             }
 
             _state.Value = state;
