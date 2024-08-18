@@ -1,5 +1,4 @@
-﻿using System;
-using GeneralUtils;
+﻿using GeneralUtils;
 using UnityEngine;
 
 namespace _Game.Scripts {

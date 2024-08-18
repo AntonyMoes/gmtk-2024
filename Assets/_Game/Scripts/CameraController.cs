@@ -3,8 +3,11 @@ using UnityEngine;
 
 namespace _Game.Scripts {
     public class CameraController : MonoBehaviour {
+        [SerializeField] private GameObject _cameraContainer;
         [SerializeField] private Camera _camera;
         [SerializeField] [Range(0f, 1f)] private float _lerp;
+
+        public Transform CameraTransform => _camera.transform;
 
         private Transform _target;
 
@@ -24,7 +27,7 @@ namespace _Game.Scripts {
                 return;
             }
 
-            var t = _camera.transform;
+            var t = _cameraContainer.transform;
             t.position = Vector3.Lerp(t.position, _target.position, lerp);
             t.rotation = Quaternion.Euler(_target.rotation.eulerAngles.With(x: VerticalRotation));
         }

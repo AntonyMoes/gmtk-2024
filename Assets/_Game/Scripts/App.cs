@@ -26,34 +26,39 @@ namespace _Game.Scripts {
             StartGame();
         }
 
-        private void SpawnPlayer() {
+        private void SpawnPlayer(PlayerController previousPlayer = null) {
             var spawn = _currentLevel.CurrentCheckpoint != null ? _currentLevel.CurrentCheckpoint : _currentLevel.Spawn;
             _player = Instantiate(_playerPrefab, _currentLevel.Spawn);
             _player.transform.position = spawn.position;
             _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
             _camera.VerticalRotation = 0;
             _player.Init(_camera, _stateText);
+
+            if (previousPlayer != null) {
+                _player.ReloadInTheSameLevel(previousPlayer);
+            }
         }
 
-        private void KillPlayer() {
+        private PlayerController KillPlayer() {
             _camera.SetTarget(null);
             Destroy(_player.gameObject);
+            var killedPlayer = _player;
             _player = null;
+            return killedPlayer;
         }
 
-        private void StartGame() {
+        private void StartGame(PlayerController killedPlayer = null) {
             SoundController.Instance.PlayMusic("1_the_bottom", 0.5f);
-            SpawnPlayer();
+            SpawnPlayer(killedPlayer);
         }
 
-        private void EndGame() {
+        private PlayerController EndGame() {
             SoundController.Instance.StopAllSounds();
-            KillPlayer();
+            return KillPlayer();
         }
 
         private void RestartFromCheckpoint() {
-            EndGame();
-            StartGame();
+            StartGame(EndGame());
         }
 
         private void Update() {

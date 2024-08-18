@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using _Game.Scripts.Interaction;
 using GeneralUtils;
 using TMPro;
 using DG.Tweening;
@@ -12,6 +12,7 @@ namespace _Game.Scripts {
         [SerializeField] private Collider _collider;
         [SerializeField] private Transform _cameraTarget;
         [SerializeField] private CollisionTracker _groundCollisionTracker;
+        [SerializeField] private Interactor _interactor;
 
         [Header("Settings")] [SerializeField] private float _movementSpeed;
         [SerializeField] private float _horizontalRotationSpeed;
@@ -35,10 +36,17 @@ namespace _Game.Scripts {
         private Vector3 _velocity;
         private float _remainingCoyoteTime;
 
+        private bool _debugFreeze;
+
         public void Init(CameraController camera, TextMeshProUGUI stateText) {
             _camera = camera;
             _camera.SetTarget(_cameraTarget);
             _stateText = stateText;
+            _interactor.Init(_camera.CameraTransform, GetComponentsInChildren<Collider>());
+        }
+
+        public void ReloadInTheSameLevel(PlayerController previous) {
+            _interactor.ReloadInTheSameLevel(previous._interactor);
         }
 
         public void ToggleNoClip() {
@@ -64,6 +72,14 @@ namespace _Game.Scripts {
         }
 
         private void UpdateInputs() {
+            if (Input.GetButtonDown("DebugFreeze")) {
+                _debugFreeze = !_debugFreeze;
+            }
+
+            if (_debugFreeze) {
+                return;
+            }
+            
             var horizontalInput = Input.GetAxisRaw("Horizontal");
             var verticalInput = Input.GetAxisRaw("Vertical");
             _moveInput = new Vector2(horizontalInput, verticalInput);
