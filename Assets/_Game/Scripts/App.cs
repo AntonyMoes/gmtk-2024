@@ -30,7 +30,7 @@ namespace _Game.Scripts {
             var spawn = _currentLevel.CurrentCheckpoint != null ? _currentLevel.CurrentCheckpoint : _currentLevel.Spawn;
             _player = Instantiate(_playerPrefab, _currentLevel.Spawn);
             _player.transform.position = spawn.position;
-            _player.transform.rotation = spawn.rotation;
+            _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
             _camera.VerticalRotation = 0;
             _player.Init(_camera, _stateText);
         }
