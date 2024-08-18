@@ -28,7 +28,9 @@ namespace _Game.Scripts {
 
         private void SpawnPlayer() {
             var spawn = _currentLevel.CurrentCheckpoint != null ? _currentLevel.CurrentCheckpoint : _currentLevel.Spawn;
-            _player = Instantiate(_playerPrefab, spawn);
+            _player = Instantiate(_playerPrefab, _currentLevel.Spawn);
+            _player.transform.position = spawn.position;
+            _player.transform.rotation = spawn.rotation;
             _camera.VerticalRotation = 0;
             _player.Init(_camera, _stateText);
         }
