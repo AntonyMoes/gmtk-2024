@@ -30,6 +30,7 @@ namespace _Game.Scripts {
         private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
         private Vector2 _moveInput;
         private bool _jumpInput;
+        private bool _sprintInput;
 
         private Contact _slidingContact;
         private Vector3 _velocity;
@@ -81,6 +82,7 @@ namespace _Game.Scripts {
             _camera.VerticalRotation = newVerticalRotation;
 
             _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
+            _sprintInput = Input.GetButton("Sprint");
 
             if (_state.Value == State.NoClip) {
                 UpdateNoClipMovement(Time.deltaTime);
@@ -131,6 +133,12 @@ namespace _Game.Scripts {
             if (_jumpInput) {
                 _jumpInput = false;
                 Jump();
+            }
+
+            if (_sprintInput) {
+                _movementSpeed = 10;
+            } else {
+                _movementSpeed = 5;
             }
         }
 
