@@ -29,6 +29,7 @@ namespace _Game.Scripts {
         private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
         private Vector2 _moveInput;
         private bool _jumpInput;
+        private int jumpsLeft = 1;
 
         private Contact _slidingContact;
         private Vector3 _velocity;
@@ -179,6 +180,8 @@ namespace _Game.Scripts {
         }
 
         private void Jump() {
+            if (jumpsLeft < 1) return;
+            jumpsLeft -= 1;
             switch (_state.Value) {
                 case State.Grounded:
                 case State.Sliding:
@@ -188,6 +191,11 @@ namespace _Game.Scripts {
                     _velocity.y = 0;
                     _velocity += normal * _jumpForce;
                     break;
+                case State.Falling:
+                    _velocity.y = -_velocity.y;
+                    _velocity +=  Vector3.up * _jumpForce;
+                    break;
+                
             }
         }
 
@@ -278,6 +286,7 @@ namespace _Game.Scripts {
             
             // Transition to state
             if (state == State.Grounded) {
+                jumpsLeft = 1;
                 if (_velocity.y < -5f) {
                     string sound = isMetalGround() ? "land_metal": "land_default";
                     SoundController.Instance.PlaySound(sound, 0.05f, 1f, false);
