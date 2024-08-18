@@ -16,6 +16,8 @@ namespace _Game.Scripts {
         [SerializeField] private AudioClip[] _clips;
 
         [SerializeField] private float globalVolume = 1f;
+        [SerializeField] private bool isMuted = false;
+        
 
         private readonly List<AudioSource> _soundSources = new List<AudioSource>();
         private Tween _musicTween;
@@ -42,7 +44,7 @@ namespace _Game.Scripts {
             source.clip = _clips.First(clip => clip.name == soundName);
 
             source.Play();
-            source.volume = volume * globalVolume;
+            source.volume = volume * GetGlobalVolumeMultiplier();
             source.pitch = pitch;
             source.loop = loop;
 
@@ -76,10 +78,10 @@ namespace _Game.Scripts {
                 _musicTween = DOTween.Sequence()
                     .Append(_music.DOFade(0f, fadeDuration))
                     .AppendCallback(SetNew)
-                    .Append(_music.DOFade(volume * globalVolume, fadeDuration));
+                    .Append(_music.DOFade(volume * GetGlobalVolumeMultiplier(), fadeDuration));
             } else {
                 SetNew();
-                _music.DOFade(volume, fadeDuration);
+                _music.DOFade(volume * GetGlobalVolumeMultiplier(), fadeDuration);
             }
 
             return _music;
@@ -88,17 +90,24 @@ namespace _Game.Scripts {
                 _music.Stop();
                 _music.clip = _clips.First(clip => clip.name == musicName);
                 _music.loop = true;
+                _music.volume = 0f;
                 _music.Play();
             }
         }
 
+        public float GetGlobalVolumeMultiplier() {
+            float multiplier = isMuted ? 0.0001f : 1f;
+            return globalVolume * multiplier;
+        }
+
         public void ToggleMute() {
-            globalVolume *= -1;
-            float multiplier = globalVolume > 0 ? 10000f : 0.0001f;
+            isMuted = !isMuted;
+            var multiplier = GetGlobalVolumeMultiplier();
+            if (!isMuted) {
+                multiplier *= 10000f;
+            }
             _soundSources.Where(ss => ss.isPlaying).ForEach(ss => { ss.volume *= multiplier; });
             _music.volume *= multiplier;
-            Debug.Log(_music.volume);
-            
         }
 
         private void OnDestroy() {

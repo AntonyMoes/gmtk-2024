@@ -309,7 +309,7 @@ namespace _Game.Scripts {
                     SoundController.Instance.PlaySound("land_smooth", 0.2f, 1f, false);
                     break;
                 case State.Falling:
-                    SoundController.Instance.PlaySound("fall", 0f, 1.5f, false, true).DOFade(0.08f, 5f);
+                    SoundController.Instance.PlaySound("fall", 0f, 1.5f, false, true).DOFade(0.08f, 5f);;
                     break;
                 case State.NoClip:
                     SoundController.Instance.PlaySound("noclip", 0.1f, 1f, false, true);
