@@ -186,6 +186,7 @@ MonoBehaviour:
   _horizontalRotationSpeed: 10
   _verticalRotationSpeed: 10
   _jumpForce: 5
+  _coyoteTime: 0.15
   _gravity: 10
   _fallGravityMultiplier: 1.6
   _jumpManeuverability: 0.03

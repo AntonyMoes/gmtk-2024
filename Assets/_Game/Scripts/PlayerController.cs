@@ -17,6 +17,7 @@ namespace _Game.Scripts {
         [SerializeField] private float _horizontalRotationSpeed;
         [SerializeField] private float _verticalRotationSpeed;
         [SerializeField] private float _jumpForce;
+        [SerializeField] private float _coyoteTime;
         [SerializeField] private float _gravity;
         [SerializeField] private float _fallGravityMultiplier;
         [SerializeField] [Range(0f, 1f)] private float _jumpManeuverability;
@@ -32,6 +33,7 @@ namespace _Game.Scripts {
 
         private Contact _slidingContact;
         private Vector3 _velocity;
+        private float _remainingCoyoteTime;
 
         public void Init(CameraController camera, TextMeshProUGUI stateText) {
             _camera = camera;
@@ -53,10 +55,12 @@ namespace _Game.Scripts {
         }
 
         private void FixedUpdate() {
-            var state = GetState(_state.Value);
+            var deltaTime = Time.fixedDeltaTime;
+
+            var state = GetState(_state.Value, deltaTime);
             SetState(state);
 
-            UpdateMovement(Time.fixedDeltaTime);
+            UpdateMovement(deltaTime);
         }
 
         private void UpdateInputs() {
@@ -224,7 +228,7 @@ namespace _Game.Scripts {
             return false;
         }
 
-        private State GetState(State current) {
+        private State GetState(State current, float deltaTime) {
             switch (current) {
                 case State.NoClip:
                     return State.NoClip;
@@ -232,13 +236,21 @@ namespace _Game.Scripts {
                 case State.Grounded:
                 case State.Falling:
                 case State.Sliding:
-                    return CheckGroundCollision()
-                        ? State.Grounded
+                    var groundCollision = CheckGroundCollision();
+                    bool grounded;
+                    if (current == State.Grounded) {
+                        _remainingCoyoteTime -= deltaTime;
+                        grounded = _remainingCoyoteTime > 0 || groundCollision;
+                    } else {
+                        grounded = groundCollision;
+                    }
+
+                    return grounded ? State.Grounded
                         : CheckSlidingCollision()
-                            ? State.Sliding
-                            : State.Falling;
+                        ? State.Sliding
+                        : State.Falling;
                 case State.Jumping:
-                    return _velocity.y > 0 ? State.Jumping : GetState(State.Falling);
+                    return _velocity.y > 0 ? State.Jumping : GetState(State.Falling, deltaTime);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(current), current, null);
             }
@@ -256,18 +268,23 @@ namespace _Game.Scripts {
             }
 
             _rb.isKinematic = state == State.NoClip;
-            if (state == State.NoClip) {
-                _velocity = Vector3.zero;
-                _rb.velocity = Vector3.zero;
+            switch (state) {
+                case State.NoClip:
+                    _velocity = Vector3.zero;
+                    _rb.velocity = Vector3.zero;
+                    break;
+                case State.Grounded:
+                    _remainingCoyoteTime = _coyoteTime;
+                    break;
             }
 
-            UpdateSoundOnStateChange(state);
+            UpdateSoundOnStateChange(_state.Value, state);
 
             _state.Value = state;
         }
 
-        private void UpdateSoundOnStateChange(State newState) {
-            switch (_state.Value) {
+        private void UpdateSoundOnStateChange(State oldState, State newState) {
+            switch (oldState) {
                 case State.Grounded:
                     SoundController.Instance.StopSound("walk_default", 0.3f);
                     SoundController.Instance.StopSound("walk_metal", 0.3f);
