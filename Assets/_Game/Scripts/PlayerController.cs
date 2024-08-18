@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeneralUtils;
 using TMPro;
+using DG.Tweening;
 using UnityEngine;
 
 namespace _Game.Scripts {
@@ -155,6 +156,22 @@ namespace _Game.Scripts {
         private void Move(Vector3 speed, float deltaTime) {
             _lastSetVel = speed;
             _rb.velocity = speed;
+
+            if (_state.Value == State.Grounded) {
+                string sound = isMetalGround() ? "walk_metal": "walk_default";
+                if (speed.magnitude > 0f) {
+                    SoundController.Instance.PlaySound(sound, 0.1f, 1f, false);
+                } else {
+                    SoundController.Instance.StopSound(sound, 0.1f);
+                }   
+            } else if(_state.Value == State.Sliding) {
+                if (speed.y < -5f) {
+                    SoundController.Instance.PlaySound("slide", 0.1f, 0.5f, false); 
+                } else {
+                    SoundController.Instance.StopSound("slide", 0.1f);
+                }
+                
+            }
         }
 
         private void Rotate(float rotation) {
@@ -167,6 +184,7 @@ namespace _Game.Scripts {
                 case State.Sliding:
                     var normal = _state.Value == State.Sliding ? _slidingContact.Normal : Vector3.up;
                     SetState(State.Jumping);
+                    SoundController.Instance.PlaySound(isMetalGround() ? "jump_metal_temp": "jump_default_temp", 0.1f);
                     _velocity.y = 0;
                     _velocity += normal * _jumpForce;
                     break;
@@ -195,6 +213,15 @@ namespace _Game.Scripts {
                 }
             }
 
+            return false;
+        }
+
+        private bool isMetalGround() {
+            foreach (var collision in _groundCollisionTracker.Collisions) {
+                if (collision.gameObject.name.StartsWith("Metal")) {
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -232,8 +259,34 @@ namespace _Game.Scripts {
 
             _rb.isKinematic = state == State.NoClip;
             if (state == State.NoClip) {
+                SoundController.Instance.PlaySound("noclip", 0.1f, 1f, false, true);
                 _velocity = Vector3.zero;
                 _rb.velocity = Vector3.zero;
+            }
+
+            // Left state
+            if (_state.Value == State.Grounded) {
+                SoundController.Instance.StopSound("walk_default", 0.3f);
+                SoundController.Instance.StopSound("walk_metal", 0.3f);
+            } else if (_state.Value == State.Sliding) {
+                SoundController.Instance.StopSound("slide", 0.1f);
+            } else if (_state.Value == State.NoClip) {
+                SoundController.Instance.StopSound("noclip", 0.5f);
+            } else if (_state.Value == State.Falling) {
+                SoundController.Instance.StopSound("falling", 0.5f);
+            }
+            
+            // Transition to state
+            if (state == State.Grounded) {
+                if (_velocity.y < -5f) {
+                    string sound = isMetalGround() ? "land_metal": "land_default";
+                    SoundController.Instance.PlaySound(sound, 0.05f, 1f, false);
+                } else if (_velocity.y < -2f) {
+                    SoundController.Instance.PlaySound("land_smooth", 0.2f, 1f, false);
+                }
+            }
+            else if (state == State.Falling) {
+                SoundController.Instance.PlaySound("falling", 0f, 1.5f, false, true).DOFade(0.08f, 5f);
             }
 
             _state.Value = state;

@@ -26,6 +26,7 @@ namespace _Game.Scripts {
         private void StartGame() {
             _player = Instantiate(_playerPrefab, _playerSpawn);
             _player.Init(_camera, _stateText);
+            SoundController.Instance.PlayMusic("1 - The Bottom", 0.5f);
         }
 
         private void EndGame() {
@@ -42,6 +43,12 @@ namespace _Game.Scripts {
             if (Input.GetButtonDown("NoClip")) {
                 if (_player != null) {
                     _player.ToggleNoClip();
+                }
+            }
+
+            if (Input.GetButtonDown("Mute")) {
+                if (_player != null) {
+                   SoundController.Instance.ToggleMute();
                 }
             }
         }
