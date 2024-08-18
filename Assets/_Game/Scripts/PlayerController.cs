@@ -181,7 +181,7 @@ namespace _Game.Scripts {
 
         private void Jump() {
             if (jumpsLeft < 1) return;
-            jumpsLeft -= 1;
+
             switch (_state.Value) {
                 case State.Grounded:
                 case State.Sliding:
@@ -192,7 +192,10 @@ namespace _Game.Scripts {
                     _velocity += normal * _jumpForce;
                     break;
                 case State.Falling:
-                    _velocity.y = -_velocity.y;
+                    if (_velocity.y < -1f) break;
+                    SetState(State.Jumping);
+                    SoundController.Instance.PlaySound("jump_default", 0.1f);
+                    _velocity.y = 0;
                     _velocity +=  Vector3.up * _jumpForce;
                     break;
                 
@@ -293,6 +296,9 @@ namespace _Game.Scripts {
                 } else if (_velocity.y < -2f) {
                     SoundController.Instance.PlaySound("land_smooth", 0.2f, 1f, false);
                 }
+            }
+            else if (state == State.Jumping) {
+                jumpsLeft -= 1;
             }
             else if (state == State.Falling) {
                 SoundController.Instance.PlaySound("fall", 0f, 1.5f, false, true).DOFade(0.08f, 5f);

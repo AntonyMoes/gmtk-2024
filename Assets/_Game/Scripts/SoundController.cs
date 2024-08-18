@@ -89,9 +89,7 @@ namespace _Game.Scripts {
             globalVolume *= -1;
             float multiplier = globalVolume > 0 ? 10000f : 0.0001f;
             _soundSources.Where(ss => ss.isPlaying).ForEach(ss => { ss.volume *= multiplier; });
-            _music.volume *= multiplier;
-            Debug.Log(_music.volume);
-            
+            _music.volume *= multiplier;      
         }
 
         private void OnDestroy() {
