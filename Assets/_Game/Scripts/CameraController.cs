@@ -20,6 +20,10 @@ namespace _Game.Scripts {
         }
 
         private void UpdateValues(float lerp) {
+            if (_target == null) {
+                return;
+            }
+
             var t = _camera.transform;
             t.position = Vector3.Lerp(t.position, _target.position, lerp);
             t.rotation = Quaternion.Euler(_target.rotation.eulerAngles.With(x: VerticalRotation));

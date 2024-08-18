@@ -24,7 +24,7 @@ namespace _Game.Scripts {
             // _currentTrackables.Add(trackable);
             // _onTriggerEnter(trackable);
 
-            if (!_ignored.Contains(other)) {
+            if (!other.isTrigger && !_ignored.Contains(other)) {
                 _collisions.Add(other);
             }
         }
