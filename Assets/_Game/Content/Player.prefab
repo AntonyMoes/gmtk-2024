@@ -184,13 +184,13 @@ MonoBehaviour:
   _cameraTarget: {fileID: 4546339519074756378}
   _groundCollisionTracker: {fileID: 4546339517267001493}
   _interactor: {fileID: 5652709076036751107}
-  _movementSpeed: 5
+  _movementSpeed: 6
   _horizontalRotationSpeed: 10
   _verticalRotationSpeed: 10
   _jumpForce: 5
-  _coyoteTime: 0.15
+  _coyoteTime: 0.17
   _gravity: 10
-  _fallGravityMultiplier: 1.6
+  _fallGravityMultiplier: 2
   _jumpManeuverability: 0.03
   _slideManeuverability: 0.03
   _maxSlope: 45
