@@ -71,11 +71,15 @@ namespace _Game.Scripts.Interaction {
 
         private Collider _lastCollider;
         private void OnDrawGizmos() {
-            Gizmos.color = Color.magenta.WithAlpha(0.8f);
-            Gizmos.DrawLine(_origin.position, _origin.position + _origin.forward * _distance);
-            if (_lastCollider != null) {
-                Gizmos.DrawCube(_lastCollider.bounds.center, _lastCollider.bounds.size);
-            }
+            // Gizmos.color = Color.magenta.WithAlpha(0.8f);
+            //
+            // if (_origin != null) {
+            //     Gizmos.DrawLine(_origin.position, _origin.position + _origin.forward * _distance);
+            // }
+            //
+            // if (_lastCollider != null) {
+            //     Gizmos.DrawCube(_lastCollider.bounds.center, _lastCollider.bounds.size);
+            // }
         }
 
         private void SetInteractable(Interactable interactable) {

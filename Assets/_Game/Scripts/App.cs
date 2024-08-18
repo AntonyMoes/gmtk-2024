@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using _Game.Scripts.UI;
+using TMPro;
 using UnityEngine;
 
 namespace _Game.Scripts {
@@ -8,6 +9,7 @@ namespace _Game.Scripts {
         [SerializeField] private Transform _levelRoot;
         [SerializeField] private PhysicMaterial _levelMaterial;
         [SerializeField] private TextMeshProUGUI _stateText;
+        [SerializeField] private ProgressBar _staminaProgressBar;
 
         private PlayerController _player;
         private LevelController _currentLevel;
@@ -32,7 +34,7 @@ namespace _Game.Scripts {
             _player.transform.position = spawn.position;
             _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
             _camera.VerticalRotation = 0;
-            _player.Init(_camera, _stateText);
+            _player.Init(_camera, _stateText, _staminaProgressBar);
 
             if (previousPlayer != null) {
                 _player.ReloadInTheSameLevel(previousPlayer);

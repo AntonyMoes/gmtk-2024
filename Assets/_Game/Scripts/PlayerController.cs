@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using _Game.Scripts.Interaction;
+using _Game.Scripts.UI;
 using GeneralUtils;
 using TMPro;
 using DG.Tweening;
@@ -13,25 +13,39 @@ namespace _Game.Scripts {
         [SerializeField] private Transform _cameraTarget;
         [SerializeField] private CollisionTracker _groundCollisionTracker;
         [SerializeField] private Interactor _interactor;
+        [SerializeField] private ClimbingComponent _climbingComponent;
 
-        [Header("Settings")] [SerializeField] private float _movementSpeed;
-        [SerializeField] private float _horizontalRotationSpeed;
+        [Header("Look Settings")] [SerializeField]
+        private float _horizontalRotationSpeed;
+
         [SerializeField] private float _verticalRotationSpeed;
-        [SerializeField] private float _jumpForce;
+
+        [Header("Move Settings")] [SerializeField]
+        private float _movementSpeed;
+
+        [SerializeField] private float _maxSlope;
+
+        [Header("Jump Settings")] [SerializeField]
+        private float _jumpForce;
+
         [SerializeField] private float _coyoteTime;
         [SerializeField] private float _gravity;
         [SerializeField] private float _fallGravityMultiplier;
         [SerializeField] [Range(0f, 1f)] private float _jumpManeuverability;
         [SerializeField] [Range(0f, 1f)] private float _slideManeuverability;
-        [SerializeField] private float _maxSlope;
+
+        [Header("Climb Settings")] [SerializeField]
+        private float _climbingSpeed;
 
         private CameraController _camera;
         private TextMeshProUGUI _stateText;
+        private ProgressBar _staminaProgressBar;
         private Transform _originalParent;
 
         private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
         private Vector2 _moveInput;
         private bool _jumpInput;
+        private bool _climbInput;
 
         private Contact _slidingContact;
         private Vector3 _velocity;
@@ -39,12 +53,17 @@ namespace _Game.Scripts {
 
         private bool _debugFreeze;
 
-        public void Init(CameraController camera, TextMeshProUGUI stateText) {
+        public void Init(CameraController camera, TextMeshProUGUI stateText, ProgressBar staminaProgressBar) {
             _camera = camera;
             _camera.SetTarget(_cameraTarget);
             _stateText = stateText;
-            _interactor.Init(_camera.CameraTransform, GetComponentsInChildren<Collider>());
+            _staminaProgressBar = staminaProgressBar;
             _originalParent = transform.parent;
+
+            var ignoredColliders = GetComponentsInChildren<Collider>();
+            _interactor.Init(_camera.CameraTransform, ignoredColliders);
+            _climbingComponent.Init(ignoredColliders);
+            _staminaProgressBar.Load(0f, _climbingComponent.MaxStamina);
         }
 
         public void ReloadInTheSameLevel(PlayerController previous) {
@@ -62,6 +81,8 @@ namespace _Game.Scripts {
 
         private void Update() {
             UpdateInputs();
+
+            _staminaProgressBar.Value = _climbingComponent.Stamina;
         }
 
         private void FixedUpdate() {
@@ -81,7 +102,7 @@ namespace _Game.Scripts {
             if (_debugFreeze) {
                 return;
             }
-            
+
             var horizontalInput = Input.GetAxisRaw("Horizontal");
             var verticalInput = Input.GetAxisRaw("Vertical");
             _moveInput = new Vector2(horizontalInput, verticalInput);
@@ -99,6 +120,7 @@ namespace _Game.Scripts {
             _camera.VerticalRotation = newVerticalRotation;
 
             _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
+            _climbInput = _climbInput || Input.GetButtonDown("Climb");
 
             if (_state.Value == State.NoClip) {
                 UpdateNoClipMovement(Time.deltaTime);
@@ -115,6 +137,27 @@ namespace _Game.Scripts {
 
         private void UpdateMovement(float deltaTime) {
             if (_state.Value == State.NoClip) {
+                return;
+            }
+
+            var climbInput = _climbInput;
+            _climbInput = false;
+            if (climbInput && CanFall() && TryStartClimbing()) {
+                SetState(State.Climbing);
+                return;
+            }
+
+            var jumpInput = _jumpInput;
+            _jumpInput = false;
+            if (_state.Value == State.Climbing) {
+                if (jumpInput) {
+                    Jump();
+                } else if (climbInput || _climbingComponent.CantClimb) {
+                    SetState(State.Falling);
+                } else {
+                    HandleClimbing(deltaTime);
+                }
+
                 return;
             }
 
@@ -139,7 +182,7 @@ namespace _Game.Scripts {
             }
 
             _velocity = newVelocity;
-            Move(newVelocity, Time.fixedDeltaTime);
+            Move(newVelocity);
 
             if (CanFall()) {
                 var gravity = _state.Value == State.Falling ? _fallGravityMultiplier * _gravity : _gravity;
@@ -148,8 +191,7 @@ namespace _Game.Scripts {
                 _velocity.y = 0;
             }
 
-            if (_jumpInput) {
-                _jumpInput = false;
+            if (jumpInput) {
                 Jump();
             }
         }
@@ -187,8 +229,7 @@ namespace _Game.Scripts {
             _rb.gameObject.transform.parent = _originalParent;
         }
 
-        private void Move(Vector3 speed, float deltaTime) {
-            _lastSetVel = speed;
+        private void Move(Vector3 speed) {
             _rb.velocity = speed;
 
             if (_state.Value == State.Grounded) {
@@ -208,20 +249,33 @@ namespace _Game.Scripts {
         }
 
         private void Rotate(float rotation) {
-            transform.Rotate(Vector3.up, rotation);
+            if (_state.Value != State.Climbing) {
+                transform.Rotate(Vector3.up, rotation);
+            } else {
+                _cameraTarget.Rotate(Vector3.up, rotation);
+            }
         }
 
         private void Jump() {
+            Vector3 normal;
             switch (_state.Value) {
                 case State.Grounded:
-                case State.Sliding:
-                    var normal = _state.Value == State.Sliding ? _slidingContact.Normal : Vector3.up;
-                    SetState(State.Jumping);
-                    SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.1f);
-                    _velocity.y = 0;
-                    _velocity += normal * _jumpForce;
+                    normal = Vector3.up;
                     break;
+                case State.Sliding:
+                    normal = _slidingContact.Normal;
+                    break;
+                case State.Climbing:
+                    normal = _camera.CameraTransform.forward;
+                    break;
+                default:
+                    return;
             }
+
+            SetState(State.Jumping);
+            SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.1f);
+            _velocity.y = 0;
+            _velocity += normal * _jumpForce;
         }
 
         private bool CheckGroundCollision() {
@@ -261,6 +315,8 @@ namespace _Game.Scripts {
 
         private State GetState(State current, float deltaTime) {
             switch (current) {
+                case State.Climbing:
+                    return _climbingComponent.ClimbContact != null ? State.Climbing : State.Falling;
                 case State.NoClip:
                     return State.NoClip;
                 case State.None:
@@ -276,10 +332,11 @@ namespace _Game.Scripts {
                         grounded = groundCollision;
                     }
 
-                    return grounded ? State.Grounded
+                    return grounded
+                        ? State.Grounded
                         : CheckSlidingCollision()
-                        ? State.Sliding
-                        : State.Falling;
+                            ? State.Sliding
+                            : State.Falling;
                 case State.Jumping:
                     return _velocity.y > 0 ? State.Jumping : GetState(State.Falling, deltaTime);
                 default:
@@ -299,6 +356,13 @@ namespace _Game.Scripts {
             }
 
             _rb.isKinematic = state == State.NoClip;
+
+            if (_state.Value == State.Climbing) {
+                transform.rotation = Quaternion.Euler(_cameraTarget.rotation.eulerAngles.With(x: 0, z: 0));
+                _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero);
+                _climbingComponent.LatchOff();
+            }
+
             switch (state) {
                 case State.NoClip:
                     _velocity = Vector3.zero;
@@ -306,6 +370,11 @@ namespace _Game.Scripts {
                     break;
                 case State.Grounded:
                     _remainingCoyoteTime = _coyoteTime;
+                    _climbingComponent.Land();
+                    break;
+                case State.Climbing:
+                    _velocity = Vector3.zero;
+                    MoveToClimbingContact();
                     break;
             }
 
@@ -340,7 +409,8 @@ namespace _Game.Scripts {
                     SoundController.Instance.PlaySound("land_smooth", 0.2f, 1f, false);
                     break;
                 case State.Falling:
-                    SoundController.Instance.PlaySound("fall", 0f, 1.5f, false, true).DOFade(0.08f, 5f);;
+                    SoundController.Instance.PlaySound("fall", 0f, 1.5f, false, true).DOFade(0.08f, 5f);
+                    ;
                     break;
                 case State.NoClip:
                     SoundController.Instance.PlaySound("noclip", 0.1f, 1f, false, true);
@@ -371,17 +441,47 @@ namespace _Game.Scripts {
             }
         }
 
-        private Vector3 _lastSetVel;
-        private List<(Vector3, Vector3)> _rays = new List<(Vector3, Vector3)>();
-        private List<(Vector3, Vector3)> _lastRays = new List<(Vector3, Vector3)>();
+        private Vector3 _lastClimbingNormal;
+        private void MoveToClimbingContact() {
+            var (position, direction) =
+                _climbingComponent.GetLatchPositionAndDirection(_climbingComponent.ClimbContact);
+            _rb.position = position;
+            transform.rotation = Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, direction, Vector3.up));
+            _lastClimbingNormal = _climbingComponent.ClimbContact.Normal;
+        }
+
+        private bool TryStartClimbing() {
+            return _climbingComponent.LatchOnContact != null && _climbingComponent.LatchOn();
+        }
+
+        private void HandleClimbing(float deltaTime) {
+            if (_climbingComponent.ClimbContact.Normal != _lastClimbingNormal) {
+                MoveToClimbingContact();
+            }
+
+            var climbingInput = (transform.right * _moveInput.x + transform.up * _moveInput.y).normalized;
+            var movement = Vector3.ProjectOnPlane(climbingInput, _lastClimbingNormal).normalized *
+                           _climbingSpeed;
+
+            // TODO block movement if
+
+            if (climbingInput != Vector3.zero) {
+                _lastClimbInput = climbingInput;
+                _lastClimbVel = movement;
+            }
+
+            Move(movement);
+            _climbingComponent.Move(_moveInput, movement, deltaTime);
+        }
+
+        private Vector3 _lastClimbInput;
+        private Vector3 _lastClimbVel;
 
         private void OnDrawGizmos() {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, transform.position + _velocity);
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(transform.position, transform.position + _lastSetVel);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(transform.position, transform.position + _rb.velocity);
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(transform.position, transform.position + _lastClimbInput);
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(transform.position, transform.position + _lastClimbVel);
         }
     }
 }
