@@ -1401,6 +1401,26 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3323112988426687870, guid: aaa8e9b2a9859cc4c88a91257f69f34d, type: 3}
+      propertyPath: m_TagString
+      value: Moving
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323112988794042167, guid: aaa8e9b2a9859cc4c88a91257f69f34d, type: 3}
+      propertyPath: m_TagString
+      value: Moving
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323112988933721658, guid: aaa8e9b2a9859cc4c88a91257f69f34d, type: 3}
+      propertyPath: m_TagString
+      value: Moving
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323112989005438734, guid: aaa8e9b2a9859cc4c88a91257f69f34d, type: 3}
+      propertyPath: m_TagString
+      value: Moving
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323112989717161508, guid: aaa8e9b2a9859cc4c88a91257f69f34d, type: 3}
+      propertyPath: m_TagString
+      value: Moving
+      objectReference: {fileID: 0}
     - target: {fileID: 8031416915116146420, guid: aaa8e9b2a9859cc4c88a91257f69f34d, type: 3}
       propertyPath: m_RootOrder
       value: 0

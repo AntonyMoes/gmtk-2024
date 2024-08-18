@@ -27,6 +27,7 @@ namespace _Game.Scripts {
 
         private CameraController _camera;
         private TextMeshProUGUI _stateText;
+        private Transform _originalParent;
 
         private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
         private Vector2 _moveInput;
@@ -43,6 +44,7 @@ namespace _Game.Scripts {
             _camera.SetTarget(_cameraTarget);
             _stateText = stateText;
             _interactor.Init(_camera.CameraTransform, GetComponentsInChildren<Collider>());
+            _originalParent = transform.parent;
         }
 
         public void ReloadInTheSameLevel(PlayerController previous) {
@@ -116,6 +118,8 @@ namespace _Game.Scripts {
                 return;
             }
 
+            TryLatchOnMovingPlatforms();
+
             var currentDirection = Quaternion.FromToRotation(Vector3.forward, transform.forward);
             var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
             var movementSpeedRotated = currentDirection * movementSpeed;
@@ -170,6 +174,17 @@ namespace _Game.Scripts {
             }
 
             return velocity;
+        }
+
+        private void TryLatchOnMovingPlatforms() {
+            foreach (var collision in _groundCollisionTracker.Collisions) {
+                if (collision.gameObject.CompareTag("Moving")) {
+                    _rb.gameObject.transform.parent = collision.transform;
+                    return;
+                }
+            }
+
+            _rb.gameObject.transform.parent = _originalParent;
         }
 
         private void Move(Vector3 speed, float deltaTime) {
