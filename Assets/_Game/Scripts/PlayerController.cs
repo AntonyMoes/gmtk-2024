@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using GeneralUtils;
 using TMPro;
 using UnityEngine;
 
@@ -23,7 +25,7 @@ namespace _Game.Scripts {
         private CameraController _camera;
         private TextMeshProUGUI _stateText;
 
-        private State _state = State.None;
+        private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
         private Vector2 _moveInput;
         private bool _jumpInput;
 
@@ -32,8 +34,12 @@ namespace _Game.Scripts {
 
         public void Init(CameraController camera, TextMeshProUGUI stateText) {
             _camera = camera;
-            _camera.Init(_cameraTarget);
+            _camera.SetTarget(_cameraTarget);
             _stateText = stateText;
+        }
+
+        public void ToggleNoClip() {
+            SetState(_state.Value == State.NoClip ? State.Falling : State.NoClip);
         }
 
         private void Start() {
@@ -46,7 +52,7 @@ namespace _Game.Scripts {
         }
 
         private void FixedUpdate() {
-            var state = GetState(_state);
+            var state = GetState(_state.Value);
             SetState(state);
 
             UpdateMovement(Time.fixedDeltaTime);
@@ -67,12 +73,28 @@ namespace _Game.Scripts {
             var verticalRotation = _camera.transform.localRotation.eulerAngles.x;
             var adjustedVerticalRotation = verticalRotation > 180 ? verticalRotation - 360 : verticalRotation;
             var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + deltaVerticalRotation, -90, 90);
-            _camera.SetVerticalRotation(newVerticalRotation);
+            _camera.VerticalRotation = newVerticalRotation;
 
             _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
+
+            if (_state.Value == State.NoClip) {
+                UpdateNoClipMovement(Time.deltaTime);
+            }
+        }
+
+        private void UpdateNoClipMovement(float deltaTime) {
+            var movementRotation = Quaternion.Euler(transform.rotation.eulerAngles.With(x: _camera.VerticalRotation));
+
+            var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
+            var movementVelocity = movementRotation * movementSpeed;
+            transform.Translate(movementVelocity * deltaTime * 10, Space.World);
         }
 
         private void UpdateMovement(float deltaTime) {
+            if (_state.Value == State.NoClip) {
+                return;
+            }
+            
             var currentDirection = Quaternion.FromToRotation(Vector3.forward, transform.forward);
             var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
             var movementSpeedRotated = currentDirection * movementSpeed;
@@ -95,7 +117,7 @@ namespace _Game.Scripts {
             Move(newVelocity, Time.fixedDeltaTime);
 
             if (CanFall()) {
-                var gravity = _state == State.Falling ? _fallGravityMultiplier * _gravity : _gravity;
+                var gravity = _state.Value == State.Falling ? _fallGravityMultiplier * _gravity : _gravity;
                 _velocity.y -= gravity * deltaTime;
             } else {
                 _velocity.y = 0;
@@ -107,10 +129,10 @@ namespace _Game.Scripts {
             }
         }
 
-        private bool InTheAir() => _state == State.Jumping || _state == State.Falling;
+        private bool InTheAir() => _state.Value == State.Jumping || _state.Value == State.Falling;
         private bool CanFall() => InTheAir() || CanSlide();
-        private bool CanSlide() => _state == State.Sliding;
-        private bool CanAdjustForSlope() => _state == State.Grounded || CanSlide();
+        private bool CanSlide() => _state.Value == State.Sliding;
+        private bool CanAdjustForSlope() => _state.Value == State.Grounded || CanSlide();
 
         private Vector3 AdjustVelocityForSlopes(Vector3 velocity) {
             Contact lowest = null;
@@ -140,10 +162,10 @@ namespace _Game.Scripts {
         }
 
         private void Jump() {
-            switch (_state) {
+            switch (_state.Value) {
                 case State.Grounded:
                 case State.Sliding:
-                    var normal = _state == State.Sliding ? _slidingContact.Normal : Vector3.up;
+                    var normal = _state.Value == State.Sliding ? _slidingContact.Normal : Vector3.up;
                     SetState(State.Jumping);
                     _velocity.y = 0;
                     _velocity += normal * _jumpForce;
@@ -178,6 +200,8 @@ namespace _Game.Scripts {
 
         private State GetState(State current) {
             switch (current) {
+                case State.NoClip:
+                    return State.NoClip;
                 case State.None:
                 case State.Grounded:
                 case State.Falling:
@@ -196,17 +220,23 @@ namespace _Game.Scripts {
         }
 
         private void SetState(State state) {
-            if (state == _state) {
+            if (state == _state.Value) {
                 return;
             }
 
-            Debug.Log($"State {_state} to {state}");
+            Debug.Log($"State {_state.Value} to {state}");
 
             if (_stateText != null) {
                 _stateText.text = state.ToString();
             }
 
-            _state = state;
+            _rb.isKinematic = state == State.NoClip;
+            if (state == State.NoClip) {
+                _velocity = Vector3.zero;
+                _rb.velocity = Vector3.zero;
+            }
+
+            _state.Value = state;
         }
 
         private enum State {
@@ -215,10 +245,15 @@ namespace _Game.Scripts {
             Sliding,
             Jumping,
             Falling,
-            Climbing
+            Climbing,
+            NoClip
         }
 
         private void OnCollisionEnter(Collision collision) {
+            if (_state.Value == State.NoClip) {
+                return;
+            }
+
             var normal = collision.GetContact(0).normal;
             var horizontalNormal = new Vector3(normal.x, 0, normal.z).normalized;
             var horizontalVelocity = new Vector3(_velocity.x, 0, _velocity.z);
@@ -228,6 +263,8 @@ namespace _Game.Scripts {
         }
 
         private Vector3 _lastSetVel;
+        private List<(Vector3, Vector3)> _rays = new List<(Vector3, Vector3)>();
+        private List<(Vector3, Vector3)> _lastRays = new List<(Vector3, Vector3)>();
 
         private void OnDrawGizmos() {
             Gizmos.color = Color.red;

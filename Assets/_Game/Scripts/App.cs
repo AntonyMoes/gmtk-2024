@@ -38,6 +38,12 @@ namespace _Game.Scripts {
                 EndGame();
                 StartGame();
             }
+
+            if (Input.GetButtonDown("NoClip")) {
+                if (_player != null) {
+                    _player.ToggleNoClip();
+                }
+            }
         }
     }
 }
