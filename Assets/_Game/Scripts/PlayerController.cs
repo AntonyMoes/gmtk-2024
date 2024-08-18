@@ -95,7 +95,7 @@ namespace _Game.Scripts {
             if (_state.Value == State.NoClip) {
                 return;
             }
-            
+
             var currentDirection = Quaternion.FromToRotation(Vector3.forward, transform.forward);
             var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
             var movementSpeedRotated = currentDirection * movementSpeed;
@@ -139,8 +139,7 @@ namespace _Game.Scripts {
             Contact lowest = null;
             foreach (var collision in _groundCollisionTracker.Collisions) {
                 var contact = _groundCollisionTracker.GetContact(collision);
-                if ((lowest == null || contact.Point.y < lowest.Point.y) &&
-                    (collision.attachedRigidbody == null /*|| collision.attachedRigidbody.mass > _rb.mass*/)) {
+                if ((lowest == null || contact.Point.y < lowest.Point.y) && collision.attachedRigidbody == null) {
                     lowest = contact;
                 }
             }
@@ -158,19 +157,18 @@ namespace _Game.Scripts {
             _rb.velocity = speed;
 
             if (_state.Value == State.Grounded) {
-                string sound = isMetalGround() ? "walk_metal": "walk_default";
+                string sound = IsMetalGround() ? "walk_metal" : "walk_default";
                 if (speed.magnitude > 0f) {
                     SoundController.Instance.PlaySound(sound, 0.1f, 1f, false);
                 } else {
                     SoundController.Instance.StopSound(sound, 0.1f);
-                }   
-            } else if(_state.Value == State.Sliding) {
+                }
+            } else if (_state.Value == State.Sliding) {
                 if (speed.y < -5f) {
-                    SoundController.Instance.PlaySound("slide", 0.1f, 0.5f, false); 
+                    SoundController.Instance.PlaySound("slide", 0.1f, 0.5f, false);
                 } else {
                     SoundController.Instance.StopSound("slide", 0.1f);
                 }
-                
             }
         }
 
@@ -184,7 +182,7 @@ namespace _Game.Scripts {
                 case State.Sliding:
                     var normal = _state.Value == State.Sliding ? _slidingContact.Normal : Vector3.up;
                     SetState(State.Jumping);
-                    SoundController.Instance.PlaySound(isMetalGround() ? "jump_metal": "jump_default", 0.1f);
+                    SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.1f);
                     _velocity.y = 0;
                     _velocity += normal * _jumpForce;
                     break;
@@ -216,12 +214,13 @@ namespace _Game.Scripts {
             return false;
         }
 
-        private bool isMetalGround() {
+        private bool IsMetalGround() {
             foreach (var collision in _groundCollisionTracker.Collisions) {
                 if (collision.gameObject.name.StartsWith("Metal")) {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -239,7 +238,6 @@ namespace _Game.Scripts {
                             ? State.Sliding
                             : State.Falling;
                 case State.Jumping:
-                    // return _rb.velocity.y > 0 ? State.Jumping : GetState(State.Falling);
                     return _velocity.y > 0 ? State.Jumping : GetState(State.Falling);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(current), current, null);
@@ -259,37 +257,47 @@ namespace _Game.Scripts {
 
             _rb.isKinematic = state == State.NoClip;
             if (state == State.NoClip) {
-                SoundController.Instance.PlaySound("noclip", 0.1f, 1f, false, true);
                 _velocity = Vector3.zero;
                 _rb.velocity = Vector3.zero;
             }
 
-            // Left state
-            if (_state.Value == State.Grounded) {
-                SoundController.Instance.StopSound("walk_default", 0.3f);
-                SoundController.Instance.StopSound("walk_metal", 0.3f);
-            } else if (_state.Value == State.Sliding) {
-                SoundController.Instance.StopSound("slide", 0.1f);
-            } else if (_state.Value == State.NoClip) {
-                SoundController.Instance.StopSound("noclip", 0.5f);
-            } else if (_state.Value == State.Falling) {
-                SoundController.Instance.StopSound("fall", 0.5f);
-            }
-            
-            // Transition to state
-            if (state == State.Grounded) {
-                if (_velocity.y < -5f) {
-                    string sound = isMetalGround() ? "land_metal": "land_default";
-                    SoundController.Instance.PlaySound(sound, 0.05f, 1f, false);
-                } else if (_velocity.y < -2f) {
-                    SoundController.Instance.PlaySound("land_smooth", 0.2f, 1f, false);
-                }
-            }
-            else if (state == State.Falling) {
-                SoundController.Instance.PlaySound("fall", 0f, 1.5f, false, true).DOFade(0.08f, 5f);
-            }
+            UpdateSoundOnStateChange(state);
 
             _state.Value = state;
+        }
+
+        private void UpdateSoundOnStateChange(State newState) {
+            switch (_state.Value) {
+                case State.Grounded:
+                    SoundController.Instance.StopSound("walk_default", 0.3f);
+                    SoundController.Instance.StopSound("walk_metal", 0.3f);
+                    break;
+                case State.Sliding:
+                    SoundController.Instance.StopSound("slide", 0.1f);
+                    break;
+                case State.NoClip:
+                    SoundController.Instance.StopSound("noclip", 0.5f);
+                    break;
+                case State.Falling:
+                    SoundController.Instance.StopSound("fall", 0.5f);
+                    break;
+            }
+
+            switch (newState) {
+                case State.Grounded when _velocity.y < -5f:
+                    var sound = IsMetalGround() ? "land_metal" : "land_default";
+                    SoundController.Instance.PlaySound(sound, 0.05f, 1f, false);
+                    break;
+                case State.Grounded when _velocity.y < -2f:
+                    SoundController.Instance.PlaySound("land_smooth", 0.2f, 1f, false);
+                    break;
+                case State.Falling:
+                    SoundController.Instance.PlaySound("fall", 0f, 1.5f, false, true).DOFade(0.08f, 5f);
+                    break;
+                case State.NoClip:
+                    SoundController.Instance.PlaySound("noclip", 0.1f, 1f, false, true);
+                    break;
+            }
         }
 
         private enum State {
