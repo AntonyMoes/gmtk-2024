@@ -30,6 +30,7 @@ namespace _Game.Scripts {
         }
 
         private void EndGame() {
+            SoundController.Instance.StopAllSounds();
             Destroy(_player.gameObject);
             _player = null;
         }

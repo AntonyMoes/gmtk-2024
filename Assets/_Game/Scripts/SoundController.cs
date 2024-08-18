@@ -62,6 +62,13 @@ namespace _Game.Scripts {
                 });
         }
 
+        public void StopAllSounds() {
+            foreach (AudioSource ss in _soundSources) {
+                ss.Stop();
+            }
+            _music.Stop();
+        }
+
         public AudioSource PlayMusic(string musicName, float volume = 1f) {
             _musicTween?.Kill();
             const float fadeDuration = 0.3f;
