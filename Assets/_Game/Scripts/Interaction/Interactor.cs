@@ -45,14 +45,6 @@ namespace _Game.Scripts.Interaction {
                     continue;
                 }
 
-                // var interactable = hit.collider.GetComponent<Interactable>();
-                // if (interactable != null) {
-                //     interactable
-                //     _lastCollider = hit.collider;
-                //     SetInteractable(interactable);
-                //     return;
-                // }
-
                 if (!hit.collider.isTrigger) {
                     if (hit.distance < closestObjectDistance) {
                         closestObjectDistance = hit.distance;
@@ -61,25 +53,11 @@ namespace _Game.Scripts.Interaction {
                 }
             }
 
-            _lastCollider = closestObject;
             SetInteractable(closestObject != null ? closestObject.GetComponent<Interactable>() : null);
         }
 
         private void OnDestroy() {
             SetInteractable(null);
-        }
-
-        private Collider _lastCollider;
-        private void OnDrawGizmos() {
-            // Gizmos.color = Color.magenta.WithAlpha(0.8f);
-            //
-            // if (_origin != null) {
-            //     Gizmos.DrawLine(_origin.position, _origin.position + _origin.forward * _distance);
-            // }
-            //
-            // if (_lastCollider != null) {
-            //     Gizmos.DrawCube(_lastCollider.bounds.center, _lastCollider.bounds.size);
-            // }
         }
 
         private void SetInteractable(Interactable interactable) {

@@ -8,11 +8,13 @@ namespace _Game.Scripts {
         [SerializeField] private PlayerController _playerPrefab;
         [SerializeField] private Transform _levelRoot;
         [SerializeField] private PhysicMaterial _levelMaterial;
-        [SerializeField] private TextMeshProUGUI _stateText;
+        [SerializeField] private TextMeshProUGUI _debugText;
         [SerializeField] private ProgressBar _staminaProgressBar;
 
         private PlayerController _player;
         private LevelController _currentLevel;
+
+        public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
 
         private void Start() {
             Cursor.visible = false;
@@ -33,8 +35,7 @@ namespace _Game.Scripts {
             _player = Instantiate(_playerPrefab, _currentLevel.Spawn);
             _player.transform.position = spawn.position;
             _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
-            _camera.VerticalRotation = 0;
-            _player.Init(_camera, _stateText, _staminaProgressBar);
+            _player.Init(_camera, _debugText, _staminaProgressBar);
 
             if (previousPlayer != null) {
                 _player.ReloadInTheSameLevel(previousPlayer);

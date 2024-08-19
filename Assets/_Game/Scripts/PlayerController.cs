@@ -15,14 +15,13 @@ namespace _Game.Scripts {
         [SerializeField] private Interactor _interactor;
         [SerializeField] private ClimbingComponent _climbingComponent;
 
-        [Header("Look Settings")] [SerializeField]
-        private float _horizontalRotationSpeed;
-
+        [Header("Look Settings")]
+        [SerializeField] private float _horizontalRotationSpeed;
         [SerializeField] private float _verticalRotationSpeed;
+        [SerializeField] private float _webGLScale;
 
-        [Header("Move Settings")] [SerializeField]
-        private float _movementSpeed;
-
+        [Header("Move Settings")]
+        [SerializeField] private float _movementSpeed;
         [SerializeField] private float _maxSlope;
 
         [Header("Jump Settings")]
@@ -34,11 +33,11 @@ namespace _Game.Scripts {
         [SerializeField] [Range(0f, 1f)] private float _jumpManeuverability;
         [SerializeField] [Range(0f, 1f)] private float _slideManeuverability;
 
-        [Header("Climb Settings")] [SerializeField]
-        private float _climbingSpeed;
+        [Header("Climb Settings")]
+        [SerializeField] private float _climbingSpeed;
 
         private CameraController _camera;
-        private TextMeshProUGUI _stateText;
+        private TextMeshProUGUI _debugText;
         private ProgressBar _staminaProgressBar;
         private Transform _originalParent;
 
@@ -53,10 +52,10 @@ namespace _Game.Scripts {
 
         private bool _debugFreeze;
 
-        public void Init(CameraController camera, TextMeshProUGUI stateText, ProgressBar staminaProgressBar) {
+        public void Init(CameraController camera, TextMeshProUGUI debugText, ProgressBar staminaProgressBar) {
             _camera = camera;
             _camera.SetTarget(_cameraTarget);
-            _stateText = stateText;
+            _debugText = debugText;
             _staminaProgressBar = staminaProgressBar;
             _originalParent = transform.parent;
 
@@ -71,7 +70,9 @@ namespace _Game.Scripts {
         }
 
         public void ToggleNoClip() {
-            SetState(_state.Value == State.NoClip ? State.Falling : State.NoClip);
+            if (App.DevBuild) {
+                SetState(_state.Value == State.NoClip ? State.Falling : State.NoClip);
+            }
         }
 
         private void Start() {
@@ -95,7 +96,7 @@ namespace _Game.Scripts {
         }
 
         private void UpdateInputs() {
-            if (Input.GetButtonDown("DebugFreeze")) {
+            if (Input.GetButtonDown("DebugFreeze") && App.DevBuild) {
                 _debugFreeze = !_debugFreeze;
             }
 
@@ -107,17 +108,22 @@ namespace _Game.Scripts {
             var verticalInput = Input.GetAxisRaw("Vertical");
             _moveInput = new Vector2(horizontalInput, verticalInput);
 
+
+            var lookScale =
+#if UNITY_WEBGL && !UNITY_EDITOR
+                _webGLScale;
+#else
+                1f;
+#endif
+
             var horizontalRotationInput = Input.GetAxis("Mouse X");
-            var horizontalRotation = horizontalRotationInput * _horizontalRotationSpeed /** deltaTime*/;
-            Rotate(horizontalRotation);
+            var horizontalRotation = horizontalRotationInput * _horizontalRotationSpeed * lookScale;
+
 
             var verticalRotationInput = -Input.GetAxis("Mouse Y");
-            var deltaVerticalRotation = verticalRotationInput * _verticalRotationSpeed /** deltaTime*/;
+            var deltaVerticalRotation = verticalRotationInput * _verticalRotationSpeed * lookScale;
 
-            var verticalRotation = _camera.transform.localRotation.eulerAngles.x;
-            var adjustedVerticalRotation = verticalRotation > 180 ? verticalRotation - 360 : verticalRotation;
-            var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + deltaVerticalRotation, -90, 90);
-            _camera.VerticalRotation = newVerticalRotation;
+            Rotate(horizontalRotation, deltaVerticalRotation);
 
             _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
             _climbInput = _climbInput || Input.GetButtonDown("Climb");
@@ -125,10 +131,15 @@ namespace _Game.Scripts {
             if (_state.Value == State.NoClip) {
                 UpdateNoClipMovement(Time.deltaTime);
             }
+
+            // _debugText.text = $"{transform.rotation.eulerAngles}\n{transform.localRotation.eulerAngles}" +
+            //                   $"\n{_cameraTarget.rotation.eulerAngles}\n{_cameraTarget.localRotation.eulerAngles}" +
+            //                   $"\n\n{horizontalRotation} {deltaVerticalRotation}";
         }
 
         private void UpdateNoClipMovement(float deltaTime) {
-            var movementRotation = Quaternion.Euler(transform.rotation.eulerAngles.With(x: _camera.VerticalRotation));
+            var movementRotation =
+                Quaternion.Euler(transform.rotation.eulerAngles.With(x: _cameraTarget.localRotation.eulerAngles.x));
 
             var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
             var movementVelocity = movementRotation * movementSpeed;
@@ -248,12 +259,24 @@ namespace _Game.Scripts {
             }
         }
 
-        private void Rotate(float rotation) {
+        private void Rotate(float horizontalRotation, float verticalRotation) {
+            float horizontalCameraRotation;
             if (_state.Value != State.Climbing) {
-                transform.Rotate(Vector3.up, rotation);
+                transform.Rotate(Vector3.up, horizontalRotation);
+                horizontalCameraRotation = 0f;
             } else {
-                _cameraTarget.Rotate(Vector3.up, rotation);
+                horizontalCameraRotation = horizontalRotation;
             }
+
+            var currentVerticalRotation = _camera.transform.localRotation.eulerAngles.x;
+            var adjustedVerticalRotation =
+                currentVerticalRotation > 180 ? currentVerticalRotation - 360 : currentVerticalRotation;
+            var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + verticalRotation, -90, 90);
+
+            var newRotation = _cameraTarget.localRotation.eulerAngles;
+            newRotation.y += horizontalCameraRotation;
+            newRotation.x = newVerticalRotation;
+            _cameraTarget.localRotation = Quaternion.Euler(newRotation);
         }
 
         private void Jump() {
@@ -355,15 +378,15 @@ namespace _Game.Scripts {
 
             Debug.Log($"State {_state.Value} to {state}");
 
-            if (_stateText != null) {
-                _stateText.text = state.ToString();
+            if (_debugText != null) {
+                _debugText.text = state.ToString();
             }
 
             _rb.isKinematic = state == State.NoClip;
 
             if (_state.Value == State.Climbing) {
                 transform.rotation = Quaternion.Euler(_cameraTarget.rotation.eulerAngles.With(x: 0, z: 0));
-                _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero);
+                _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero.With(x: _cameraTarget.localRotation.x));
                 _climbingComponent.LatchOff();
             }
 
@@ -446,15 +469,16 @@ namespace _Game.Scripts {
         }
 
         private Vector3 _lastClimbingNormal;
+
         private void MoveToClimbingContact() {
             var (position, direction) =
                 _climbingComponent.GetLatchPositionAndPossibleDirection(_climbingComponent.ClimbContact);
             var newDirection = direction ?? transform.forward;
 
             _rb.position = position;
-            var cameraRotation = _cameraTarget.rotation;
-            transform.rotation = Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
-            _cameraTarget.rotation = cameraRotation;
+            transform.rotation =
+                Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
+            _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero.With(x: _cameraTarget.localRotation.x));
             _lastClimbingNormal = _climbingComponent.ClimbContact.Normal;
 
             if (direction == null) {
@@ -474,8 +498,6 @@ namespace _Game.Scripts {
             var climbingInput = (transform.right * _moveInput.x + transform.up * _moveInput.y).normalized;
             var movement = Vector3.ProjectOnPlane(climbingInput, _lastClimbingNormal).normalized *
                            _climbingSpeed;
-
-            // TODO block movement if
 
             if (climbingInput != Vector3.zero) {
                 _lastClimbInput = climbingInput;
