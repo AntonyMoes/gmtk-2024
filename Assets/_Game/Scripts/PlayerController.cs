@@ -62,7 +62,7 @@ namespace _Game.Scripts {
 
             var ignoredColliders = GetComponentsInChildren<Collider>();
             _interactor.Init(_camera.CameraTransform, ignoredColliders);
-            _climbingComponent.Init(ignoredColliders);
+            _climbingComponent.Init(() => _maxSlope, ignoredColliders);
             _staminaProgressBar.Load(0f, _climbingComponent.MaxStamina);
         }
 
@@ -444,9 +444,11 @@ namespace _Game.Scripts {
         private Vector3 _lastClimbingNormal;
         private void MoveToClimbingContact() {
             var (position, direction) =
-                _climbingComponent.GetLatchPositionAndDirection(_climbingComponent.ClimbContact);
+                _climbingComponent.GetLatchPositionAndPossibleDirection(_climbingComponent.ClimbContact);
+            var newDirection = direction ?? transform.forward;
+
             _rb.position = position;
-            transform.rotation = Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, direction, Vector3.up));
+            transform.rotation = Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
             _lastClimbingNormal = _climbingComponent.ClimbContact.Normal;
         }
 
