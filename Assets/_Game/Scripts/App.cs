@@ -11,8 +11,6 @@ namespace _Game.Scripts {
         [SerializeField] private UIController _uiController;
         [SerializeField] private string _level;
 
-        private PlayerController _player;
-        private CheckpointController _currentCheckpoint;
 
         public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
 
@@ -26,6 +24,10 @@ namespace _Game.Scripts {
 
         public void InitLevel(LevelController controller) {
             controller.Init(_uiController, _camera, _playerPrefab, _levelMaterial);
+        }
+
+        public void FinishLevel() {
+            Start();
         }
     }
 }

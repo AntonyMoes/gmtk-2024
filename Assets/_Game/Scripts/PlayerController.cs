@@ -232,12 +232,12 @@ namespace _Game.Scripts {
         private void TryLatchOnMovingPlatforms() {
             foreach (var collision in _groundCollisionTracker.Collisions) {
                 if (collision.gameObject.CompareTag("Moving")) {
-                    _rb.gameObject.transform.parent = collision.transform;
+                    _rb.transform.SetParent(collision.transform, true);
                     return;
                 }
             }
 
-            _rb.gameObject.transform.parent = _originalParent;
+            _rb.transform.SetParent(_originalParent, true);
         }
 
         private void Move(Vector3 speed) {
@@ -268,7 +268,7 @@ namespace _Game.Scripts {
                 horizontalCameraRotation = horizontalRotation;
             }
 
-            var currentVerticalRotation = _camera.transform.localRotation.eulerAngles.x;
+            var currentVerticalRotation = _cameraTarget.localRotation.eulerAngles.x;
             var adjustedVerticalRotation =
                 currentVerticalRotation > 180 ? currentVerticalRotation - 360 : currentVerticalRotation;
             var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + verticalRotation, -90, 90);
