@@ -14,6 +14,9 @@ namespace _Game.Scripts.Interaction {
 
             _activated = true;
             _director.Play();
+            StartAnimation();
         }
+
+        protected virtual void StartAnimation() { } 
     }
 }

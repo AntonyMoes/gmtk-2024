@@ -1371,7 +1371,7 @@ GameObject:
   - component: {fileID: 6170023793540980448}
   - component: {fileID: 2092856352766926037}
   - component: {fileID: 8987677183539207348}
-  - component: {fileID: 1318888252780114812}
+  - component: {fileID: 6848654268631041251}
   m_Layer: 0
   m_Name: ElevatorAnimationTrigger
   m_TagString: Untagged
@@ -1425,7 +1425,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 32.724438, y: 9.500366, z: 8.456005}
   m_Center: {x: 3.8614602, y: -1.4033508, z: -3.7279296}
---- !u!114 &1318888252780114812
+--- !u!114 &6848654268631041251
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1434,7 +1434,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7671984807962459976}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94a395867f364aafacd9bd3eae20b2ca, type: 3}
+  m_Script: {fileID: 11500000, guid: e50eb304312c4112b2956fd12bf3491b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _director: {fileID: 2092856352766926037}
