@@ -452,6 +452,10 @@ namespace _Game.Scripts {
             transform.rotation = Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
             _cameraTarget.rotation = cameraRotation;
             _lastClimbingNormal = _climbingComponent.ClimbContact.Normal;
+
+            if (direction == null) {
+                SetState(State.Falling);
+            }
         }
 
         private bool TryStartClimbing() {

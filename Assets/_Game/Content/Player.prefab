@@ -353,7 +353,7 @@ MonoBehaviour:
   _maxClimbingAngle: 110
   _minClimbingWidth: 0.5
   _climbStraightOrigin: {fileID: 6023026834419768601}
-  _climbStraightDistance: 1.5
+  _climbStraightDistance: 2
   _climbLeftOrigin: {fileID: 4227160397842851109}
   _climbLeftOutOrigin: {fileID: 7226233014418723820}
   _climbRightOrigin: {fileID: 8437747833386764956}
