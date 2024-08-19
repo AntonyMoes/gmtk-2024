@@ -1958,7 +1958,7 @@ Transform:
   - {fileID: 215032966}
   - {fileID: 389977370}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1101151492
 MonoBehaviour:
@@ -1993,9 +1993,14 @@ MonoBehaviour:
   _music: {fileID: 27728893}
   _clips:
   - {fileID: 8300000, guid: 9d9325160ee339c4b84156f8338c5885, type: 3}
+  - {fileID: 8300000, guid: 07172a864711ade419a0724445842521, type: 3}
+  - {fileID: 8300000, guid: 137cb3ed86dd58d45bae6aaacc8cbf70, type: 3}
+  - {fileID: 8300000, guid: c84cdc57d768c974097502ebc4ddc4cb, type: 3}
+  - {fileID: 8300000, guid: f20c693d986b79546b9ee361f67ca74f, type: 3}
   - {fileID: 8300000, guid: 1477ab2313c26dd438e527cc4d7c590e, type: 3}
   - {fileID: 8300000, guid: f9db21297531d7642bb56da28e84da7e, type: 3}
   - {fileID: 8300000, guid: 32c0bb7096c383645beafd7e6a6f5a32, type: 3}
+  - {fileID: 8300000, guid: 6102c1d0906c9d849a7532c36e1ce259, type: 3}
   - {fileID: 8300000, guid: e80f0344def8ddb44b0811a2ad529237, type: 3}
   - {fileID: 8300000, guid: af34399d5a7f24047b1bc6eac10a383d, type: 3}
   - {fileID: 8300000, guid: d134cc9e4a1093643bcae540e9e9ae3f, type: 3}
@@ -3395,7 +3400,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 346645197}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 209574566483998749, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
       propertyPath: m_RootOrder
@@ -3459,8 +3464,3 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
---- !u!4 &4792420238353285807 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 209574566483998749, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
-  m_PrefabInstance: {fileID: 4792420238353285806}
-  m_PrefabAsset: {fileID: 0}
