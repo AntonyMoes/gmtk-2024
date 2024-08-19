@@ -448,7 +448,9 @@ namespace _Game.Scripts {
             var newDirection = direction ?? transform.forward;
 
             _rb.position = position;
+            var cameraRotation = _cameraTarget.rotation;
             transform.rotation = Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
+            _cameraTarget.rotation = cameraRotation;
             _lastClimbingNormal = _climbingComponent.ClimbContact.Normal;
         }
 
