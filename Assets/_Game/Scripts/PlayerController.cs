@@ -14,6 +14,7 @@ namespace _Game.Scripts {
         [SerializeField] private CollisionTracker _groundCollisionTracker;
         [SerializeField] private Interactor _interactor;
         [SerializeField] private ClimbingComponent _climbingComponent;
+        [SerializeField] private GameObject _pickaxeHolder;
 
         [Header("Look Settings")]
         [SerializeField] private float _horizontalRotationSpeed;
@@ -40,6 +41,7 @@ namespace _Game.Scripts {
         private TextMeshProUGUI _debugText;
         private ProgressBar _staminaProgressBar;
         private Transform _originalParent;
+        private bool _canClimb;
 
         private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
         private Vector2 _moveInput;
@@ -52,7 +54,7 @@ namespace _Game.Scripts {
 
         private bool _debugFreeze;
 
-        public void Init(CameraController camera, TextMeshProUGUI debugText, ProgressBar staminaProgressBar) {
+        public void Init(CameraController camera, TextMeshProUGUI debugText, ProgressBar staminaProgressBar, bool canClimb) {
             _camera = camera;
             _camera.SetTarget(_cameraTarget);
             _debugText = debugText;
@@ -63,6 +65,14 @@ namespace _Game.Scripts {
             _interactor.Init(_camera.CameraTransform, ignoredColliders);
             _climbingComponent.Init(() => _maxSlope, ignoredColliders);
             _staminaProgressBar.Load(0f, _climbingComponent.MaxStamina);
+
+            SetCanClimb(canClimb);
+        }
+
+        public void SetCanClimb(bool canClimb) {
+            _canClimb = canClimb;
+            _pickaxeHolder.SetActive(canClimb);
+            _climbingComponent.enabled = canClimb;
         }
 
         public void ReloadInTheSameLevel(PlayerController previous) {
@@ -126,7 +136,7 @@ namespace _Game.Scripts {
             Rotate(horizontalRotation, deltaVerticalRotation);
 
             _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
-            _climbInput = _climbInput || Input.GetButtonDown("Climb");
+            _climbInput = _canClimb && _climbInput || Input.GetButtonDown("Climb");
 
             if (_state.Value == State.NoClip) {
                 UpdateNoClipMovement(Time.deltaTime);

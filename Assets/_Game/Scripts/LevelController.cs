@@ -5,6 +5,7 @@ using UnityEngine;
 namespace _Game.Scripts {
     public class LevelController : MonoBehaviour {
         [SerializeField] private CheckpointController _checkpointController;
+        [SerializeField] private bool _canClimb;
 
         private UIController _uiController;
         private CameraController _camera;
@@ -34,7 +35,7 @@ namespace _Game.Scripts {
             _player = Instantiate(_playerPrefab, _checkpointController.Spawn);
             _player.transform.position = spawn.position;
             _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
-            _player.Init(_camera, _uiController.DebugText, _uiController.StaminaProgressBar);
+            _player.Init(_camera, _uiController.DebugText, _uiController.StaminaProgressBar, _canClimb);
 
             if (previousPlayer != null) {
                 _player.ReloadInTheSameLevel(previousPlayer);

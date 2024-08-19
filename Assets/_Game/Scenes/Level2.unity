@@ -262,6 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _checkpointController: {fileID: 4682260109480577475}
+  _canClimb: 1
 --- !u!65 &49391184863834032
 BoxCollider:
   m_ObjectHideFlags: 0

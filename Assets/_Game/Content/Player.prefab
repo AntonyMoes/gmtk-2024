@@ -379,6 +379,7 @@ MonoBehaviour:
   _groundCollisionTracker: {fileID: 4546339517267001493}
   _interactor: {fileID: 5652709076036751107}
   _climbingComponent: {fileID: 2823502257870457614}
+  _pickaxeHolder: {fileID: 804546830963333477}
   _horizontalRotationSpeed: 10
   _verticalRotationSpeed: 10
   _webGLScale: 0.5882353
