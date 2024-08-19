@@ -1054,6 +1054,7 @@ MonoBehaviour:
   _cameraContainer: {fileID: 658384059}
   _camera: {fileID: 682838986}
   _lerp: 0.15
+  _lookLerp: 0.6
 --- !u!1 &682838982
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,6 +1104,7 @@ MonoBehaviour:
   _cameraContainer: {fileID: 0}
   _camera: {fileID: 682838986}
   _lerp: 0.15
+  _lookLerp: 0
 --- !u!81 &682838985
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2093,7 +2095,7 @@ MonoBehaviour:
   _playerPrefab: {fileID: 4546339518295911044, guid: 2d8afcdcead63a4478432b73903a44e9, type: 3}
   _levelRoot: {fileID: 346645197}
   _levelMaterial: {fileID: 13400000, guid: e1d07c7bf6fc7db4d8d9702161412697, type: 2}
-  _stateText: {fileID: 1000091518}
+  _debugText: {fileID: 1000091518}
   _staminaProgressBar: {fileID: 343333592}
 --- !u!114 &1101151493
 MonoBehaviour:
@@ -2508,7 +2510,7 @@ GameObject:
   - component: {fileID: 1350531823}
   - component: {fileID: 1350531822}
   m_Layer: 5
-  m_Name: State
+  m_Name: Debug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2532,7 +2534,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 150}
+  m_SizeDelta: {x: 500, y: 400}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1350531822
 MonoBehaviour:
