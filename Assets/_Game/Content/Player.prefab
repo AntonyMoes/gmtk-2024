@@ -384,9 +384,11 @@ MonoBehaviour:
   _verticalRotationSpeed: 10
   _webGLScale: 0.5882353
   _movementSpeed: 6
+  _runSpeed: 12
   _maxSlope: 45
   _jumpForce: 5
   _climbingJumpForce: 12
+  _slidingJumpForce: 10
   _coyoteTime: 0.17
   _gravity: 10
   _fallGravityMultiplier: 2
