@@ -398,7 +398,7 @@ namespace _Game.Scripts {
 
             if (_state.Value == State.Climbing) {
                 transform.rotation = Quaternion.Euler(_cameraTarget.rotation.eulerAngles.With(x: 0, z: 0));
-                _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero.With(x: _cameraTarget.localRotation.x));
+                _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero.With(x: _cameraTarget.localRotation.eulerAngles.x));
                 _climbingComponent.LatchOff();
             }
 
@@ -490,7 +490,7 @@ namespace _Game.Scripts {
             _rb.position = position;
             transform.rotation =
                 Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
-            _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero.With(x: _cameraTarget.localRotation.x));
+            _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero.With(x: _cameraTarget.localRotation.eulerAngles.x));
             _lastClimbingNormal = _climbingComponent.ClimbContact.Normal;
 
             if (direction == null) {
