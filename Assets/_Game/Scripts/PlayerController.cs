@@ -217,7 +217,7 @@ namespace _Game.Scripts {
                 case State.Sliding:
                     var normal = _state.Value == State.Sliding ? _slidingContact.Normal : Vector3.up;
                     SetState(State.Jumping);
-                    SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.1f);
+                    SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.2f);
                     _velocity.y = 0;
                     _velocity += normal * _jumpForce;
                     break;
