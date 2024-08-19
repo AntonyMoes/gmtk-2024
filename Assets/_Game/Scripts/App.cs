@@ -14,6 +14,7 @@ namespace _Game.Scripts {
         [SerializeField] private string[] _levels;
 
         private LevelController _currentLevel;
+        private int _currentLevelIndex;
 
         public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
 
@@ -58,6 +59,7 @@ namespace _Game.Scripts {
         }
 
         private void StartLevel(string level) {
+            _currentLevelIndex = _levels.IndexOf(level);
             _uiController.LoadingScreen.Show();
             _uiController.MainMenu.Hide();
             _uiController.SelectLevelMenu.Hide();
@@ -72,7 +74,12 @@ namespace _Game.Scripts {
 
         public void FinishLevel() {
             _currentLevel = null;
-            Start();
+
+            if (_currentLevelIndex < _levels.Length - 1) {
+                StartLevel(_levels[_currentLevelIndex + 1]);
+            } else {
+                Start();
+            }
         }
 
         public void Kill() {

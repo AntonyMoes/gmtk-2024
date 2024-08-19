@@ -24,11 +24,13 @@ namespace _Game.Scripts {
 
         [Header("Move Settings")]
         [SerializeField] private float _movementSpeed;
+        [SerializeField] private float _runSpeed;
         [SerializeField] private float _maxSlope;
 
         [Header("Jump Settings")]
         [SerializeField] private float _jumpForce;
         [SerializeField] private float _climbingJumpForce;
+        [SerializeField] private float _slidingJumpForce;
         [SerializeField] private float _coyoteTime;
         [SerializeField] private float _gravity;
         [SerializeField] private float _fallGravityMultiplier;
@@ -46,6 +48,7 @@ namespace _Game.Scripts {
 
         private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
         private Vector2 _moveInput;
+        private bool _runInput;
         private bool _jumpInput;
         private bool _climbInput;
 
@@ -137,6 +140,7 @@ namespace _Game.Scripts {
 
             Rotate(horizontalRotation, deltaVerticalRotation);
 
+            _runInput = Input.GetButton("Run");
             _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
             _climbInput = _canClimb && _climbInput || Input.GetButtonDown("Climb");
 
@@ -153,7 +157,8 @@ namespace _Game.Scripts {
             var movementRotation =
                 Quaternion.Euler(transform.rotation.eulerAngles.With(x: _cameraTarget.localRotation.eulerAngles.x));
 
-            var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
+            var speed = _runInput ? _runSpeed : _movementSpeed;
+            var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * speed;
             var movementVelocity = movementRotation * movementSpeed;
             transform.Translate(movementVelocity * deltaTime * 10, Space.World);
         }
@@ -187,7 +192,8 @@ namespace _Game.Scripts {
             TryLatchOnMovingPlatforms();
 
             var currentDirection = Quaternion.FromToRotation(Vector3.forward, transform.forward);
-            var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
+            var speed = _runInput && _state.Value == State.Grounded ? _runSpeed : _movementSpeed;
+            var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * speed;
             var movementSpeedRotated = currentDirection * movementSpeed;
 
             var velocityAdjusted = CanAdjustForSlope()
@@ -301,7 +307,7 @@ namespace _Game.Scripts {
                     break;
                 case State.Sliding:
                     normal = _slidingContact.Normal;
-                    force = _jumpForce;
+                    force = _slidingJumpForce;
                     break;
                 case State.Climbing:
                     normal = _camera.CameraTransform.forward;

@@ -8,6 +8,7 @@
             }
 
             _activated = true;
+            OnOnceTrigger(interactor);
         }
 
         protected abstract void OnOnceTrigger(Interactor interactor);
