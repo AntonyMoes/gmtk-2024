@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Game.Scripts.Climbing;
 using GeneralUtils;
 using JetBrains.Annotations;
 using UnityEngine;
 
 namespace _Game.Scripts {
     public class ClimbingComponent : MonoBehaviour {
+        [SerializeField] private PickaxeAnimator _animator;
+
         [Header("Climbing")]
         [SerializeField] private float _minClimbingAngle;
         [SerializeField] private float _maxClimbingAngle;
@@ -55,6 +58,7 @@ namespace _Game.Scripts {
             Stamina -= _latchOnStamina;
             ClimbContact = LatchOnContact;
             LatchOnContact = null;
+            _animator.LatchOn(ClimbContact);
             return true;
         }
 
@@ -66,9 +70,11 @@ namespace _Game.Scripts {
             }
 
             Stamina -= deltaTime * _staminaPerSecond;
+            _animator.Move(movement, ClimbContact);
         }
 
         public void LatchOff() {
+            _animator.LatchOff();
             ClimbContact = null;
         }
 
