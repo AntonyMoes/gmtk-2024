@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace GeneralUtils.UI {
+namespace _Game.Scripts.UI {
     public class ButtonSound : MonoBehaviour {
         public void ButtonClick() {
             // TODO

@@ -1,4 +1,5 @@
 ﻿using System;
+using _Game.Scripts.Climbing;
 using _Game.Scripts.Interaction;
 using _Game.Scripts.UI;
 using GeneralUtils;
