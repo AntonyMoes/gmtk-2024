@@ -39,26 +39,32 @@ namespace _Game.Scripts {
             }
         }
 
-        private PlayerController KillPlayer() {
+        private void KillPlayer() {
             _camera.SetTarget(null);
-            Destroy(_player.gameObject);
-            var killedPlayer = _player;
-            _player = null;
-            return killedPlayer;
+            if (_player != null) {
+                Destroy(_player.gameObject);
+            }
         }
 
         private void StartGame(PlayerController killedPlayer = null) {
+            _uiController.RestartScreen.Hide();
             SoundController.Instance.PlayMusic("1_the_bottom", 0.5f);
             SpawnPlayer(killedPlayer);
         }
 
-        private PlayerController EndGame() {
-            SoundController.Instance.StopAllSounds();
-            return KillPlayer();
+        public void Kill() {
+            _uiController.RestartScreen.Show();
+            EndGame();
         }
 
         private void RestartFromCheckpoint() {
-            StartGame(EndGame());
+            EndGame();
+            StartGame(_player);
+        }
+
+        private void EndGame() {
+            SoundController.Instance.StopAllSounds();
+            KillPlayer();
         }
 
         private void Update() {

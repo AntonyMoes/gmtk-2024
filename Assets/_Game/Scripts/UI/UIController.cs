@@ -22,6 +22,9 @@ namespace _Game.Scripts.UI {
         [SerializeField] private SelectLevelMenu _selectLevelMenu;
         public SelectLevelMenu SelectLevelMenu => _selectLevelMenu;
 
+        [SerializeField] private UIElement _restartScreen;
+        public UIElement RestartScreen => _restartScreen;
+
 
         private readonly UpdatedValue<bool> _uiActive = new UpdatedValue<bool>();
         public IUpdatedValue<bool> UiActive => _uiActive;

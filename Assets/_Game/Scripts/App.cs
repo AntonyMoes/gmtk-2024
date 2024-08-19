@@ -11,6 +11,8 @@ namespace _Game.Scripts {
         [SerializeField] private UIController _uiController;
         [SerializeField] private string[] _levels;
 
+        private LevelController _currentLevel;
+
         public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
 
         private void Awake() {
@@ -52,12 +54,18 @@ namespace _Game.Scripts {
         }
 
         public void InitLevel(LevelController controller) {
+            _currentLevel = controller;
             controller.Init(_uiController, _camera, _playerPrefab, _levelMaterial);
             _uiController.LoadingScreen.Hide();
         }
 
         public void FinishLevel() {
+            _currentLevel = null;
             Start();
+        }
+
+        public void Kill() {
+            _currentLevel.Kill();
         }
     }
 }
