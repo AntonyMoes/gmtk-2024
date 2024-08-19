@@ -23,6 +23,7 @@ namespace _Game.Scripts.Interaction {
         }
 
         public void Pickup(Pickup item) {
+            SoundController.Instance.PlaySound("key", 0.1f);
             _items.Add(item.Type);
         }
 
