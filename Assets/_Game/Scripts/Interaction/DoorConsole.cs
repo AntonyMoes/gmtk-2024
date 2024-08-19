@@ -38,7 +38,6 @@ namespace _Game.Scripts.Interaction {
         public override void Interact() {
             _opening = true;
             _opened = true;
-            SoundController.Instance.PlaySound("doorconsole_interact", 0.1f);
             SoundController.Instance.PlaySound("door_opening", 0.4f);
 
             DOTween.Sequence()
