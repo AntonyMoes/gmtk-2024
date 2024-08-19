@@ -5,6 +5,8 @@ Shader "Custom/S_Triplanar"
     {
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
+        _MaskTex ("Mask", 2D) = "black" {}
+        _SecondaryTex ("Secondary Albedo", 2D) = "white" {}
         _Glossiness("Smoothness", Range(0,1)) = 0.5
         _Metallic("Metallic", Range(0,1)) = 0.0
         _Scale("Scale", float) = 1
@@ -22,6 +24,8 @@ Shader "Custom/S_Triplanar"
         #pragma target 3.0
 
         sampler2D _MainTex;
+        sampler2D _MaskTex;
+        sampler2D _SecondaryTex;
         float _Scale;
 
         struct Input
@@ -49,9 +53,19 @@ Shader "Custom/S_Triplanar"
             float3 projX = tex2D(_MainTex, worldPos.yz) * blends.x;
             float3 projY = tex2D(_MainTex, worldPos.xz) * blends.y;
             float3 projZ = tex2D(_MainTex, worldPos.xy) * blends.z;
+            float3 albedo = projX + projY + projZ;
             
-            o.Albedo = projX + projY + projZ;
-            // Metallic and smoothness come from slider variables
+            float3 projMX = tex2D(_MaskTex, worldPos.yz) * blends.x;
+            float3 projMY = tex2D(_MaskTex, worldPos.xz) * blends.y;
+            float3 projMZ = tex2D(_MaskTex, worldPos.xy) * blends.z;
+            float3 mask = projMX + projMY + projMZ;
+
+            float3 proj1X = tex2D(_SecondaryTex, worldPos.yz) * blends.x;
+            float3 proj1Y = tex2D(_SecondaryTex, worldPos.xz) * blends.y;
+            float3 proj1Z = tex2D(_SecondaryTex, worldPos.xy) * blends.z;
+            float3 albedo1 = proj1X + proj1Y + proj1Z;
+
+            o.Albedo = albedo * (1 - mask) + albedo1 * mask;
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
         }
