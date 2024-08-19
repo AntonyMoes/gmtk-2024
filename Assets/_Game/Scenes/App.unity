@@ -2005,7 +2005,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 51f003644b8c3ff4a8b7ea51cb4b0cae, type: 3}
   globalVolume: 1
   isMuted: 0
-<<<<<<< HEAD
 --- !u!114 &1101151494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2020,8 +2019,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _debugText: {fileID: 1000091518}
   _staminaProgressBar: {fileID: 343333592}
-=======
->>>>>>> c3d7699 (added key-console-door sounds)
 --- !u!1 &1130052530
 GameObject:
   m_ObjectHideFlags: 0
