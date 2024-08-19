@@ -110,7 +110,7 @@ namespace _Game.Scripts {
             }
         }
 
-        public (Vector3, Vector3) GetLatchPositionAndDirection(Contact contact) {
+        private static (Vector3, Vector3) GetLatchPositionAndDirection(Contact contact) {
             var horizontalNormal = contact.Normal.With(y: 0f);
             var position = contact.Point + horizontalNormal;
             var direction = -horizontalNormal.normalized;
@@ -120,7 +120,7 @@ namespace _Game.Scripts {
         public (Vector3, Vector3?) GetLatchPositionAndPossibleDirection(Contact contact) {
             var (position, direction) = GetLatchPositionAndDirection(contact);
             if (Vector3.Angle(contact.Normal, Vector3.up) < _maxSlopeAngle()) {
-                return (position, null);
+                return (position + Vector3.up, null);
             }
 
             return (position, direction);

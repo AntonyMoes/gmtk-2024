@@ -25,9 +25,9 @@ namespace _Game.Scripts {
 
         [SerializeField] private float _maxSlope;
 
-        [Header("Jump Settings")] [SerializeField]
-        private float _jumpForce;
-
+        [Header("Jump Settings")]
+        [SerializeField] private float _jumpForce;
+        [SerializeField] private float _climbingJumpForce;
         [SerializeField] private float _coyoteTime;
         [SerializeField] private float _gravity;
         [SerializeField] private float _fallGravityMultiplier;
@@ -258,15 +258,19 @@ namespace _Game.Scripts {
 
         private void Jump() {
             Vector3 normal;
+            float force;
             switch (_state.Value) {
                 case State.Grounded:
                     normal = Vector3.up;
+                    force = _jumpForce;
                     break;
                 case State.Sliding:
                     normal = _slidingContact.Normal;
+                    force = _jumpForce;
                     break;
                 case State.Climbing:
                     normal = _camera.CameraTransform.forward;
+                    force = _climbingJumpForce;
                     break;
                 default:
                     return;
@@ -275,7 +279,7 @@ namespace _Game.Scripts {
             SetState(State.Jumping);
             SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.1f);
             _velocity.y = 0;
-            _velocity += normal * _jumpForce;
+            _velocity += normal * force;
         }
 
         private bool CheckGroundCollision() {
@@ -452,6 +456,10 @@ namespace _Game.Scripts {
             transform.rotation = Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
             _cameraTarget.rotation = cameraRotation;
             _lastClimbingNormal = _climbingComponent.ClimbContact.Normal;
+
+            if (direction == null) {
+                SetState(State.Falling);
+            }
         }
 
         private bool TryStartClimbing() {
