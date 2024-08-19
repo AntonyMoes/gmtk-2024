@@ -6,10 +6,17 @@ namespace _Game.Scripts.Interaction {
         private void OnTriggerEnter(Collider other) {
             var interactor = other.GetComponent<Interactor>();
             if (interactor != null) {
-                OnTrigger(interactor);
+                OnTrigger(true, interactor);
             }
         }
 
-        protected abstract void OnTrigger(Interactor interactor);
+        private void OnTriggerExit(Collider other) {
+            var interactor = other.GetComponent<Interactor>();
+            if (interactor != null) {
+                OnTrigger(false, interactor);
+            }
+        }
+
+        protected abstract void OnTrigger(bool enter, Interactor interactor);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace _Game.Scripts.Interaction {
-    public class Pickup : Trigger {
+    public class Pickup : EnterTrigger {
         [SerializeField] private string _type;
         public string Type => _type;
 
