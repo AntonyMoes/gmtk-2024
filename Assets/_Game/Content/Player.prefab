@@ -318,6 +318,7 @@ MonoBehaviour:
   _movementSpeed: 6
   _maxSlope: 45
   _jumpForce: 5
+  _climbingJumpForce: 12
   _coyoteTime: 0.17
   _gravity: 10
   _fallGravityMultiplier: 2
