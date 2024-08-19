@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: e630c935c5f03a34c865592298f854e0
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - IM FELL English PRO
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: b21a69457a4e4dc45b2446e81baebb48, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
