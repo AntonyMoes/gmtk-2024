@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using _Game.Scripts.Climbing;
 using GeneralUtils;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace _Game.Scripts {
+namespace _Game.Scripts.Climbing {
     public class ClimbingComponent : MonoBehaviour {
         [SerializeField] private PickaxeAnimator _animator;
 

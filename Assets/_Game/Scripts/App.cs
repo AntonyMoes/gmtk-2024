@@ -1,85 +1,71 @@
 ﻿using _Game.Scripts.UI;
-using TMPro;
+using GeneralUtils;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _Game.Scripts {
-    public class App : MonoBehaviour {
+    public class App : SingletonBehaviour<App> {
         [SerializeField] private CameraController _camera;
         [SerializeField] private PlayerController _playerPrefab;
-        [SerializeField] private Transform _levelRoot;
         [SerializeField] private PhysicMaterial _levelMaterial;
-        [SerializeField] private TextMeshProUGUI _debugText;
-        [SerializeField] private ProgressBar _staminaProgressBar;
+        [SerializeField] private UIController _uiController;
+        [SerializeField] private string[] _levels;
 
-        private PlayerController _player;
         private LevelController _currentLevel;
 
         public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
 
+        private void Awake() {
+            DontDestroyOnLoad(gameObject);
+
+            _uiController.UiActive.Subscribe(SetupCursor, true);
+            _uiController.MainMenu.Setup(StartLevel, OpenSelectLevel);
+            _uiController.SelectLevelMenu.Setup(_levels, StartLevel, CloseSelectLevel);
+        }
+
         private void Start() {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            LevelUtils.SetMaterial(_levelRoot, _levelMaterial);
-
-            StartLevel(_levelRoot.GetComponentInChildren<LevelController>());
+            _uiController.MainMenu.Show();
         }
 
-        private void StartLevel(LevelController level) {
-            _currentLevel = level;
-            StartGame();
+        private void SetupCursor(bool active) {
+            Cursor.visible = active;
+            Cursor.lockState = active ? CursorLockMode.None : CursorLockMode.Locked;
         }
 
-        private void SpawnPlayer(PlayerController previousPlayer = null) {
-            var spawn = _currentLevel.CurrentCheckpoint != null ? _currentLevel.CurrentCheckpoint : _currentLevel.Spawn;
-            _player = Instantiate(_playerPrefab, _currentLevel.Spawn);
-            _player.transform.position = spawn.position;
-            _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
-            _player.Init(_camera, _debugText, _staminaProgressBar);
-
-            if (previousPlayer != null) {
-                _player.ReloadInTheSameLevel(previousPlayer);
-            }
+        private void OpenSelectLevel() {
+            _uiController.SelectLevelMenu.Show();
+            _uiController.MainMenu.Hide();
         }
 
-        private PlayerController KillPlayer() {
-            _camera.SetTarget(null);
-            Destroy(_player.gameObject);
-            var killedPlayer = _player;
-            _player = null;
-            return killedPlayer;
+        private void CloseSelectLevel() {
+            _uiController.MainMenu.Show();
+            _uiController.SelectLevelMenu.Hide();
         }
 
-        private void StartGame(PlayerController killedPlayer = null) {
-            SoundController.Instance.PlayMusic("1_the_bottom", 0.5f);
-            SpawnPlayer(killedPlayer);
+        private void StartLevel() {
+            StartLevel(_levels[0]);
         }
 
-        private PlayerController EndGame() {
-            SoundController.Instance.StopAllSounds();
-            return KillPlayer();
+        private void StartLevel(string level) {
+            _uiController.LoadingScreen.Show();
+            _uiController.MainMenu.Hide();
+            _uiController.SelectLevelMenu.Hide();
+            SceneManager.LoadScene(level, LoadSceneMode.Single);
         }
 
-        private void RestartFromCheckpoint() {
-            StartGame(EndGame());
+        public void InitLevel(LevelController controller) {
+            _currentLevel = controller;
+            controller.Init(_uiController, _camera, _playerPrefab, _levelMaterial);
+            _uiController.LoadingScreen.Hide();
         }
 
-        private void Update() {
-            if (Input.GetButtonDown("Restart")) {
-                RestartFromCheckpoint();
-            }
+        public void FinishLevel() {
+            _currentLevel = null;
+            Start();
+        }
 
-            if (Input.GetButtonDown("NoClip")) {
-                if (_player != null) {
-                    _player.ToggleNoClip();
-                }
-            }
-
-            if (Input.GetButtonDown("Mute")) {
-                if (_player != null) {
-                    SoundController.Instance.ToggleMute();
-                }
-            }
+        public void Kill() {
+            _currentLevel.Kill();
         }
     }
 }

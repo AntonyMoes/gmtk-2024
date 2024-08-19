@@ -1,16 +1,13 @@
 ﻿using UnityEngine;
 
 namespace _Game.Scripts.Interaction {
-    public class Pickup : MonoBehaviour {
+    public class Pickup : Trigger {
         [SerializeField] private string _type;
         public string Type => _type;
 
-        private void OnTriggerEnter(Collider other) {
-            var interactor = other.GetComponent<Interactor>();
-            if (interactor != null) {
-                interactor.Pickup(this);
-                Destroy(gameObject);
-            }
+        protected override void OnTrigger(Interactor interactor) {
+            interactor.Pickup(this);
+            Destroy(gameObject);
         }
     }
 }

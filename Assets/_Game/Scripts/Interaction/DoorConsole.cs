@@ -28,7 +28,7 @@ namespace _Game.Scripts.Interaction {
             if (!selected) {
                 return;
             }
-
+            SoundController.Instance.PlaySound("doorconsole_enable", 0.2f);
             _openingText.SetActive(_opened && _opening);
             _openedText.SetActive(_opened && !_opening);
             _closedText.SetActive(!_opened && !canInteract);
@@ -38,6 +38,7 @@ namespace _Game.Scripts.Interaction {
         public override void Interact() {
             _opening = true;
             _opened = true;
+            SoundController.Instance.PlaySound("door_opening", 0.4f);
 
             DOTween.Sequence()
                 .Insert(0, _door.DOLocalRotate(_targetLocalRotation, _time).SetEase(_easing))
@@ -46,6 +47,8 @@ namespace _Game.Scripts.Interaction {
         }
 
         private void EndOpening() {
+            SoundController.Instance.StopSound("door_opening", 0.2f);
+            SoundController.Instance.PlaySound("door_opened", 0.8f);
             _opening = false;
         }
     }

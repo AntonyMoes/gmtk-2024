@@ -1,38 +1,87 @@
-﻿using GeneralUtils;
+﻿using System;
+using _Game.Scripts.UI;
 using UnityEngine;
 
 namespace _Game.Scripts {
     public class LevelController : MonoBehaviour {
-        [SerializeField] private Transform _playerSpawn;
-        [SerializeField] private Checkpoint[] _checkpoints;
+        [SerializeField] private CheckpointController _checkpointController;
+        [SerializeField] private bool _canClimb;
 
-        public Transform Spawn => _playerSpawn;
+        private UIController _uiController;
+        private CameraController _camera;
+        private PlayerController _playerPrefab;
 
-        private Checkpoint _currentCheckpoint;
-        public Transform CurrentCheckpoint => _currentCheckpoint != null ? _currentCheckpoint.Spawn : null;
+        private PlayerController _player;
 
-        public void Reset() {
-            _currentCheckpoint = null;
+        private void Start() {
+            App.Instance.InitLevel(this);
         }
 
-        private void Awake() {
-            foreach (var checkpoint in _checkpoints) {
-                checkpoint.OnEnter.Subscribe(OnCheckpointEnter);
+        public void Init(UIController uiController, CameraController camera, PlayerController playerPrefab, PhysicMaterial levelMaterial) {
+            _uiController = uiController;
+            _camera = camera;
+            _playerPrefab = playerPrefab;
+
+            LevelUtils.SetMaterial(transform, levelMaterial);
+
+            StartGame();
+        }
+
+        private void SpawnPlayer(PlayerController previousPlayer = null) {
+            var spawn = _checkpointController.CurrentCheckpoint != null ? _checkpointController.CurrentCheckpoint : _checkpointController.Spawn;
+            _player = Instantiate(_playerPrefab, _checkpointController.Spawn);
+            _player.transform.position = spawn.position;
+            _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
+            _player.Init(_camera, _uiController.DebugText, _uiController.StaminaProgressBar, _canClimb);
+
+            if (previousPlayer != null) {
+                _player.ReloadInTheSameLevel(previousPlayer);
             }
         }
 
-        private void OnCheckpointEnter(Checkpoint checkpoint) {
-            checkpoint.OnEnter.Unsubscribe(OnCheckpointEnter);
-
-            if (_currentCheckpoint == null ||
-                _checkpoints.IndexOf(_currentCheckpoint) < _checkpoints.IndexOf(checkpoint)) {
-                _currentCheckpoint = checkpoint;
-            }            
+        private void KillPlayer() {
+            _camera.SetTarget(null);
+            if (_player != null) {
+                Destroy(_player.gameObject);
+            }
         }
 
-        private void OnDestroy() {
-            foreach (var checkpoint in _checkpoints) {
-                checkpoint.OnEnter.Unsubscribe(OnCheckpointEnter);
+        private void StartGame(PlayerController killedPlayer = null) {
+            _uiController.RestartScreen.Hide();
+            SoundController.Instance.PlayMusic("1_the_bottom", 0.5f);
+            SpawnPlayer(killedPlayer);
+        }
+
+        public void Kill() {
+            _uiController.RestartScreen.Show();
+            EndGame();
+        }
+
+        private void RestartFromCheckpoint() {
+            EndGame();
+            StartGame(_player);
+        }
+
+        private void EndGame() {
+            SoundController.Instance.StopAllSounds();
+            KillPlayer();
+        }
+
+        private void Update() {
+            if (Input.GetButtonDown("Restart")) {
+                RestartFromCheckpoint();
+            }
+
+            if (Input.GetButtonDown("NoClip")) {
+                if (_player != null) {
+                    _player.ToggleNoClip();
+                }
+            }
+
+            if (Input.GetButtonDown("Mute")) {
+                if (_player != null) {
+                    SoundController.Instance.ToggleMute();
+                }
             }
         }
     }

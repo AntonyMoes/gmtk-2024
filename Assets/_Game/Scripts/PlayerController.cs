@@ -1,4 +1,5 @@
 ﻿using System;
+using _Game.Scripts.Climbing;
 using _Game.Scripts.Interaction;
 using _Game.Scripts.UI;
 using GeneralUtils;
@@ -14,6 +15,7 @@ namespace _Game.Scripts {
         [SerializeField] private CollisionTracker _groundCollisionTracker;
         [SerializeField] private Interactor _interactor;
         [SerializeField] private ClimbingComponent _climbingComponent;
+        [SerializeField] private GameObject _pickaxeHolder;
 
         [Header("Look Settings")]
         [SerializeField] private float _horizontalRotationSpeed;
@@ -40,6 +42,7 @@ namespace _Game.Scripts {
         private TextMeshProUGUI _debugText;
         private ProgressBar _staminaProgressBar;
         private Transform _originalParent;
+        private bool _canClimb;
 
         private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
         private Vector2 _moveInput;
@@ -52,7 +55,7 @@ namespace _Game.Scripts {
 
         private bool _debugFreeze;
 
-        public void Init(CameraController camera, TextMeshProUGUI debugText, ProgressBar staminaProgressBar) {
+        public void Init(CameraController camera, TextMeshProUGUI debugText, ProgressBar staminaProgressBar, bool canClimb) {
             _camera = camera;
             _camera.SetTarget(_cameraTarget);
             _debugText = debugText;
@@ -63,6 +66,15 @@ namespace _Game.Scripts {
             _interactor.Init(_camera.CameraTransform, ignoredColliders);
             _climbingComponent.Init(() => _maxSlope, ignoredColliders);
             _staminaProgressBar.Load(0f, _climbingComponent.MaxStamina);
+
+            SetCanClimb(canClimb);
+        }
+
+        public void SetCanClimb(bool canClimb) {
+            _canClimb = canClimb;
+            _staminaProgressBar.gameObject.SetActive(canClimb);
+            _pickaxeHolder.SetActive(canClimb);
+            _climbingComponent.enabled = canClimb;
         }
 
         public void ReloadInTheSameLevel(PlayerController previous) {
@@ -126,7 +138,7 @@ namespace _Game.Scripts {
             Rotate(horizontalRotation, deltaVerticalRotation);
 
             _jumpInput = _jumpInput || Input.GetButtonDown("Jump");
-            _climbInput = _climbInput || Input.GetButtonDown("Climb");
+            _climbInput = _canClimb && _climbInput || Input.GetButtonDown("Climb");
 
             if (_state.Value == State.NoClip) {
                 UpdateNoClipMovement(Time.deltaTime);
@@ -232,12 +244,12 @@ namespace _Game.Scripts {
         private void TryLatchOnMovingPlatforms() {
             foreach (var collision in _groundCollisionTracker.Collisions) {
                 if (collision.gameObject.CompareTag("Moving")) {
-                    _rb.gameObject.transform.parent = collision.transform;
+                    _rb.transform.SetParent(collision.transform, true);
                     return;
                 }
             }
 
-            _rb.gameObject.transform.parent = _originalParent;
+            _rb.transform.SetParent(_originalParent, true);
         }
 
         private void Move(Vector3 speed) {
@@ -268,7 +280,7 @@ namespace _Game.Scripts {
                 horizontalCameraRotation = horizontalRotation;
             }
 
-            var currentVerticalRotation = _camera.transform.localRotation.eulerAngles.x;
+            var currentVerticalRotation = _cameraTarget.localRotation.eulerAngles.x;
             var adjustedVerticalRotation =
                 currentVerticalRotation > 180 ? currentVerticalRotation - 360 : currentVerticalRotation;
             var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + verticalRotation, -90, 90);
@@ -300,7 +312,7 @@ namespace _Game.Scripts {
             }
 
             SetState(State.Jumping);
-            SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.1f);
+            SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.2f);
             _velocity.y = 0;
             _velocity += normal * force;
         }
