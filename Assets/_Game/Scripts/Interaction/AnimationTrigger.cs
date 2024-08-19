@@ -2,17 +2,10 @@
 using UnityEngine.Playables;
 
 namespace _Game.Scripts.Interaction {
-    public class AnimationTrigger : Trigger {
+    public class AnimationTrigger : OnceEnterTrigger {
         [SerializeField] private PlayableDirector _director;
 
-        private bool _activated;
-        
-        protected override void OnTrigger(Interactor interactor) {
-            if (_activated) {
-                return;
-            }
-
-            _activated = true;
+        protected override void OnOnceTrigger(Interactor interactor) {
             _director.Play();
             StartAnimation();
         }
