@@ -22,9 +22,6 @@ namespace _Game.Scripts {
             _camera = camera;
             _playerPrefab = playerPrefab;
 
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
             LevelUtils.SetMaterial(transform, levelMaterial);
 
             StartGame();

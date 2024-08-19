@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using GeneralUtils;
+using GeneralUtils.UI;
 using TMPro;
 using UnityEngine;
 
@@ -9,5 +12,33 @@ namespace _Game.Scripts.UI {
         
         [SerializeField] private ProgressBar _staminaProgressBar;
         public ProgressBar StaminaProgressBar => _staminaProgressBar;
+
+        [SerializeField] private MainMenu _mainMenu;
+        public MainMenu MainMenu => _mainMenu;
+
+        [SerializeField] private UIElement _loadingScreen;
+        public UIElement LoadingScreen => _loadingScreen;
+
+        [SerializeField] private SelectLevelMenu _selectLevelMenu;
+        public SelectLevelMenu SelectLevelMenu => _selectLevelMenu;
+
+
+        private readonly UpdatedValue<bool> _uiActive = new UpdatedValue<bool>();
+        public IUpdatedValue<bool> UiActive => _uiActive;
+
+        private UIElement[] _elements;
+
+        private void Awake() {
+            _elements = new UIElement[] { _mainMenu, _selectLevelMenu };
+            foreach (var element in _elements) {
+                element.State.Subscribe(OnStateChange);
+            }
+        }
+
+        private void OnStateChange(UIElement.EState _) {
+            var active = _elements.Any(e =>
+                e.State.Value == UIElement.EState.Showing || e.State.Value == UIElement.EState.Shown);
+            _uiActive.Value = active;
+        }
     }
 }

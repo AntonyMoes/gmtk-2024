@@ -71,6 +71,7 @@ namespace _Game.Scripts {
 
         public void SetCanClimb(bool canClimb) {
             _canClimb = canClimb;
+            _staminaProgressBar.gameObject.SetActive(canClimb);
             _pickaxeHolder.SetActive(canClimb);
             _climbingComponent.enabled = canClimb;
         }
