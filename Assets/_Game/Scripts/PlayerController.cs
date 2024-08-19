@@ -15,14 +15,13 @@ namespace _Game.Scripts {
         [SerializeField] private Interactor _interactor;
         [SerializeField] private ClimbingComponent _climbingComponent;
 
-        [Header("Look Settings")] [SerializeField]
-        private float _horizontalRotationSpeed;
-
+        [Header("Look Settings")]
+        [SerializeField] private float _horizontalRotationSpeed;
         [SerializeField] private float _verticalRotationSpeed;
+        [SerializeField] private float _webGLScale;
 
-        [Header("Move Settings")] [SerializeField]
-        private float _movementSpeed;
-
+        [Header("Move Settings")]
+        [SerializeField] private float _movementSpeed;
         [SerializeField] private float _maxSlope;
 
         [Header("Jump Settings")]
@@ -34,8 +33,8 @@ namespace _Game.Scripts {
         [SerializeField] [Range(0f, 1f)] private float _jumpManeuverability;
         [SerializeField] [Range(0f, 1f)] private float _slideManeuverability;
 
-        [Header("Climb Settings")] [SerializeField]
-        private float _climbingSpeed;
+        [Header("Climb Settings")]
+        [SerializeField] private float _climbingSpeed;
 
         private CameraController _camera;
         private TextMeshProUGUI _debugText;
@@ -71,7 +70,9 @@ namespace _Game.Scripts {
         }
 
         public void ToggleNoClip() {
-            SetState(_state.Value == State.NoClip ? State.Falling : State.NoClip);
+            if (App.DevBuild) {
+                SetState(_state.Value == State.NoClip ? State.Falling : State.NoClip);
+            }
         }
 
         private void Start() {
@@ -95,7 +96,7 @@ namespace _Game.Scripts {
         }
 
         private void UpdateInputs() {
-            if (Input.GetButtonDown("DebugFreeze")) {
+            if (Input.GetButtonDown("DebugFreeze") && App.DevBuild) {
                 _debugFreeze = !_debugFreeze;
             }
 
@@ -107,12 +108,20 @@ namespace _Game.Scripts {
             var verticalInput = Input.GetAxisRaw("Vertical");
             _moveInput = new Vector2(horizontalInput, verticalInput);
 
+
+            var lookScale =
+#if UNITY_WEBGL && !UNITY_EDITOR
+                _webGLScale;
+#else
+                1f;
+#endif
+
             var horizontalRotationInput = Input.GetAxis("Mouse X");
-            var horizontalRotation = horizontalRotationInput * _horizontalRotationSpeed /** deltaTime*/;
-            
+            var horizontalRotation = horizontalRotationInput * _horizontalRotationSpeed * lookScale;
+
 
             var verticalRotationInput = -Input.GetAxis("Mouse Y");
-            var deltaVerticalRotation = verticalRotationInput * _verticalRotationSpeed /** deltaTime*/;
+            var deltaVerticalRotation = verticalRotationInput * _verticalRotationSpeed * lookScale;
 
             Rotate(horizontalRotation, deltaVerticalRotation);
 
@@ -129,7 +138,8 @@ namespace _Game.Scripts {
         }
 
         private void UpdateNoClipMovement(float deltaTime) {
-            var movementRotation = Quaternion.Euler(transform.rotation.eulerAngles.With(x: _cameraTarget.localRotation.eulerAngles.x));
+            var movementRotation =
+                Quaternion.Euler(transform.rotation.eulerAngles.With(x: _cameraTarget.localRotation.eulerAngles.x));
 
             var movementSpeed = new Vector3(_moveInput.x, 0, _moveInput.y).normalized * _movementSpeed;
             var movementVelocity = movementRotation * movementSpeed;
@@ -250,7 +260,6 @@ namespace _Game.Scripts {
         }
 
         private void Rotate(float horizontalRotation, float verticalRotation) {
-
             float horizontalCameraRotation;
             if (_state.Value != State.Climbing) {
                 transform.Rotate(Vector3.up, horizontalRotation);
@@ -260,14 +269,14 @@ namespace _Game.Scripts {
             }
 
             var currentVerticalRotation = _camera.transform.localRotation.eulerAngles.x;
-            var adjustedVerticalRotation = currentVerticalRotation > 180 ? currentVerticalRotation - 360 : currentVerticalRotation;
+            var adjustedVerticalRotation =
+                currentVerticalRotation > 180 ? currentVerticalRotation - 360 : currentVerticalRotation;
             var newVerticalRotation = Mathf.Clamp(adjustedVerticalRotation + verticalRotation, -90, 90);
 
             var newRotation = _cameraTarget.localRotation.eulerAngles;
             newRotation.y += horizontalCameraRotation;
             newRotation.x = newVerticalRotation;
             _cameraTarget.localRotation = Quaternion.Euler(newRotation);
-            
         }
 
         private void Jump() {
@@ -460,13 +469,15 @@ namespace _Game.Scripts {
         }
 
         private Vector3 _lastClimbingNormal;
+
         private void MoveToClimbingContact() {
             var (position, direction) =
                 _climbingComponent.GetLatchPositionAndPossibleDirection(_climbingComponent.ClimbContact);
             var newDirection = direction ?? transform.forward;
 
             _rb.position = position;
-            transform.rotation = Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
+            transform.rotation =
+                Quaternion.Euler(Vector3.up * Vector3.SignedAngle(Vector3.forward, newDirection, Vector3.up));
             _cameraTarget.localRotation = Quaternion.Euler(Vector3.zero.With(x: _cameraTarget.localRotation.x));
             _lastClimbingNormal = _climbingComponent.ClimbContact.Normal;
 

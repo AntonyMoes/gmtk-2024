@@ -7,7 +7,8 @@ using UnityEngine;
 
 namespace _Game.Scripts {
     public class ClimbingComponent : MonoBehaviour {
-        [Header("Climbing")] [SerializeField] private float _minClimbingAngle;
+        [Header("Climbing")]
+        [SerializeField] private float _minClimbingAngle;
         [SerializeField] private float _maxClimbingAngle;
         [SerializeField] private float _minClimbingWidth;
         [SerializeField] private Transform _climbStraightOrigin;
@@ -20,7 +21,8 @@ namespace _Game.Scripts {
         [SerializeField] private float _outClimbDirectionDistance;
         [SerializeField] private float _climbDirectionDistance;
 
-        [Header("Stamina")] [SerializeField] private float _stamina;
+        [Header("Stamina")]
+        [SerializeField] private float _stamina;
         [SerializeField] private float _latchOnStamina;
         [SerializeField] private float _staminaPerSecond;
 
@@ -142,7 +144,7 @@ namespace _Game.Scripts {
         [CanBeNull]
         private static Contact TryGetContactFromHit(RayCastResult hit, float maxAngle, float? minAngle = null) {
             var angle = Vector3.Angle(Vector3.up, hit.HitNormal);
-            var appropriateAngle = angle <= maxAngle && (!(minAngle is {} ma) || angle >= ma);
+            var appropriateAngle = angle <= maxAngle && (!(minAngle is { } ma) || angle >= ma);
             return hit.Hit && appropriateAngle
                 ? hit.Contact
                 : null;

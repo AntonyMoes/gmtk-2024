@@ -14,6 +14,8 @@ namespace _Game.Scripts {
         private PlayerController _player;
         private LevelController _currentLevel;
 
+        public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
+
         private void Start() {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
