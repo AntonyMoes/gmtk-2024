@@ -1,7 +1,9 @@
 ﻿using _Game.Scripts.UI;
 using GeneralUtils;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace _Game.Scripts {
     public class App : SingletonBehaviour<App> {
@@ -15,6 +17,8 @@ namespace _Game.Scripts {
 
         public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
 
+        [CanBeNull] public static string AutoStartLevel= null;
+
         private void Awake() {
             DontDestroyOnLoad(gameObject);
 
@@ -24,6 +28,13 @@ namespace _Game.Scripts {
         }
 
         private void Start() {
+            if (AutoStartLevel != null) {
+                var level = AutoStartLevel;
+                AutoStartLevel = null;
+                StartLevel(level);
+                return;
+            }
+
             _uiController.MainMenu.Show();
         }
 

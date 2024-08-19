@@ -1,6 +1,7 @@
 ﻿using System;
 using _Game.Scripts.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _Game.Scripts {
     public class LevelController : MonoBehaviour {
@@ -14,6 +15,12 @@ namespace _Game.Scripts {
         private PlayerController _player;
 
         private void Start() {
+            if (App.Instance == null) {
+                App.AutoStartLevel = SceneManager.GetActiveScene().name;
+                SceneManager.LoadScene("App");
+                return;
+            }
+
             App.Instance.InitLevel(this);
         }
 
