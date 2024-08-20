@@ -13390,7 +13390,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3564823743642770887}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -48.2, y: 13.3, z: 110.3}
+  m_LocalPosition: {x: -38, y: 14, z: 98.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3847960190706182903}
@@ -13409,7 +13409,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 1, g: 0.7465282, b: 0.5613208, a: 1}
   m_Intensity: 0.3
-  m_Range: 60.73
+  m_Range: 51.78
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -37192,7 +37192,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3847960190870815069}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 13.3, z: 110.3}
+  m_LocalPosition: {x: -5.1, y: 22.83, z: 109.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3847960190706182903}
@@ -37211,7 +37211,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 1, g: 0.7465282, b: 0.5613208, a: 1}
   m_Intensity: 1
-  m_Range: 60.73
+  m_Range: 25.3
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -67953,7 +67953,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6749648888831744672}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -132.6, y: 173.2, z: 374.4}
+  m_LocalPosition: {x: -139, y: 173.2, z: 374.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3847960190706182903}
@@ -67972,7 +67972,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 0.11792451, g: 0.6190322, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 60.73
+  m_Range: 40.48
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -96329,7 +96329,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7977378986860862785}
   m_LocalRotation: {x: 0.19942845, y: -0.93332416, z: 0.26692775, w: -0.13373101}
-  m_LocalPosition: {x: -116.17, y: 179.37, z: 418.14}
+  m_LocalPosition: {x: -128.3, y: 180.3, z: 426.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3847960190706182903}
@@ -96347,9 +96347,9 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 0.56078434, g: 1, b: 0.9708341, a: 1}
-  m_Intensity: 0.8
+  m_Intensity: 1
   m_Range: 96.7
-  m_SpotAngle: 114
+  m_SpotAngle: 89
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
