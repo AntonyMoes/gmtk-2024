@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeneralUtils;
 using UnityEngine;
 
@@ -100,8 +101,14 @@ namespace _Game.Scripts.Interaction {
             interactable.SetSelected(true, CanInteract(interactable));
         }
 
-        public void ReloadInTheSameLevel(Interactor previous) {
-            foreach (var item in previous._items) {
+        public ReloadData GetReloadData() {
+            return new ReloadData {
+                Items = _items.ToArray()
+            };
+        }
+
+        public void ReloadInTheSameLevel(ReloadData data) {
+            foreach (var item in data.Items) {
                 _items.Add(item);
             }
         }

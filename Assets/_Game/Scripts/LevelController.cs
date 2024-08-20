@@ -13,6 +13,7 @@ namespace _Game.Scripts {
         private PlayerController _playerPrefab;
 
         private PlayerController _player;
+        private ReloadData _reloadData;
 
         private void Start() {
             if (App.Instance == null) {
@@ -34,29 +35,34 @@ namespace _Game.Scripts {
             StartGame();
         }
 
-        private void SpawnPlayer(PlayerController previousPlayer = null) {
+        private void SpawnPlayer(ReloadData reloadData = null) {
             var spawn = _checkpointController.CurrentCheckpoint != null ? _checkpointController.CurrentCheckpoint : _checkpointController.Spawn;
             _player = Instantiate(_playerPrefab, _checkpointController.Spawn);
             _player.transform.position = spawn.position;
             _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
             _player.Init(_camera, _uiController.DebugText, _uiController.StaminaProgressBar, _canClimb);
 
-            if (previousPlayer != null) {
-                _player.ReloadInTheSameLevel(previousPlayer);
+            if (reloadData != null) {
+                _player.ReloadInTheSameLevel(reloadData);
             }
         }
 
         private void KillPlayer() {
-            _camera.SetTarget(null);
-            if (_player != null) {
-                Destroy(_player.gameObject);
+            if (_player == null) {
+                return;
             }
+
+            _camera.SetTarget(null);
+
+            _reloadData = _player.GetReloadData();
+            Destroy(_player.gameObject);
+            _player = null;
         }
 
-        private void StartGame(PlayerController killedPlayer = null) {
+        private void StartGame(ReloadData reloadData = null) {
             _uiController.RestartScreen.Hide();
             SoundController.Instance.PlayMusic("1_the_bottom", 0.5f);
-            SpawnPlayer(killedPlayer);
+            SpawnPlayer(reloadData);
         }
 
         public void Kill() {
@@ -66,7 +72,8 @@ namespace _Game.Scripts {
 
         private void RestartFromCheckpoint() {
             EndGame();
-            StartGame(_player);
+            StartGame(_reloadData);
+            _reloadData = null;
         }
 
         private void EndGame() {
