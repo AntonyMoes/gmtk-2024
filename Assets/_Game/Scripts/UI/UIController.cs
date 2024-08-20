@@ -37,6 +37,9 @@ namespace _Game.Scripts.UI {
         [SerializeField] private EndUICutscene _endUICutscene;
         public EndUICutscene EndUICutscene => _endUICutscene;
 
+        [SerializeField] private StartScreen _startScreen;
+        public StartScreen StartScreen => _startScreen;
+
 
         private readonly UpdatedValue<bool> _uiActive = new UpdatedValue<bool>();
         public IUpdatedValue<bool> UiActive => _uiActive;
