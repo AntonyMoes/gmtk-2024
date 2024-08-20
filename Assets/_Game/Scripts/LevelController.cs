@@ -63,6 +63,7 @@ namespace _Game.Scripts {
                 return;
             }
 
+            SoundController.Instance.StopAllSounds(false);
             _camera.SetTarget(null);
 
             _reloadData = _player.GetReloadData();
@@ -75,9 +76,11 @@ namespace _Game.Scripts {
             SpawnPlayer(reloadData);
         }
 
-        public void Kill() {
+        public void Kill(bool withScreen) {
             _uiController.LevelMenu.Hide();
-            _uiController.RestartScreen.Show();
+            if (withScreen) {
+                _uiController.RestartScreen.Show();
+            }
             EndGame();
         }
 

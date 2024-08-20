@@ -17,6 +17,8 @@ namespace _Game.Scripts {
         private int _currentLevelIndex;
         private bool _showStartCutscene;
 
+        private bool _shownStartScreen;
+
         public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
 
         [CanBeNull] public static string AutoStartLevel = null;
@@ -31,11 +33,18 @@ namespace _Game.Scripts {
         }
 
         private void Start() {
+            SoundController.Instance.SetGlobalVolume(1f);
+
             if (AutoStartLevel != null) {
                 var level = AutoStartLevel;
                 AutoStartLevel = null;
                 StartLevelFromMenu(level);
                 return;
+            }
+
+            if (!_shownStartScreen) {
+                _shownStartScreen = true;
+                _uiController.StartScreen.Show();
             }
 
             _uiController.MainMenu.Show();
@@ -108,8 +117,8 @@ namespace _Game.Scripts {
             }
         }
 
-        public void Kill() {
-            _currentLevel.Kill();
+        public void Kill(bool withScreen = true) {
+            _currentLevel.Kill(withScreen);
         }
 
         public void StartEndCutscene() {

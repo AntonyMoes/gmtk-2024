@@ -1,6 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using GeneralUtils.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,12 +9,14 @@ namespace _Game.Scripts.UI {
     public class EndUICutscene : UIElement {
         [SerializeField] private CanvasGroup _mainGroup;
         [SerializeField] private CanvasGroup _contentGroup;
+        [SerializeField] private CanvasGroup _groupA;
         [SerializeField] private Image _image;
 
         protected override void PerformShow(Action onDone = null) {
             _image.color = Color.white;
             _mainGroup.alpha = 0f;
             _contentGroup.alpha = 0f;
+            _groupA.alpha = 0f;
 
             SoundController.Instance.StopMusic(2.6f);
             DOTween.To(
@@ -29,7 +32,7 @@ namespace _Game.Scripts.UI {
                 .AppendInterval(2f)
                 .AppendCallback(() => {
                     _image.color = Color.black;
-                    App.Instance.Kill();
+                    App.Instance.Kill(false);
                     SoundController.Instance.StopAllSounds(true);
                 })
                 .AppendInterval(2f)
@@ -41,6 +44,9 @@ namespace _Game.Scripts.UI {
                 .AppendInterval(6f)
                 .Append(_contentGroup.DOFade(0f, 2f))
                 .AppendInterval(3f)
+                .Append(_groupA.DOFade(1f, 2f))
+                .AppendInterval(3f)
+                .Append(_groupA.DOFade(0f, 2f))
                 // TODO THANK PLAYER FOR PLAYING
                 .AppendCallback(() => {
                     onDone?.Invoke();
