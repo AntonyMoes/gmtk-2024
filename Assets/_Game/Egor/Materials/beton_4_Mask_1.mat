@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: beton_4
+  m_Name: beton_4_Mask_1
   m_Shader: {fileID: 4800000, guid: 55d25238348f5c04bb90c6840fd56799, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -20,21 +20,21 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 3666e00829ef6b245903221ea5bf8495, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4bc172d3a6398f949b45571e729d2501, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: cfc6dd859b11ed3459fdd7bdc06b3df2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SecondaryTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 9117b63eafc6c5845819c0a5d6b5caff, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Glossiness: 0
     - _Metallic: 0
-    - _Scale: -43.38
+    - _Scale: -51.1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
