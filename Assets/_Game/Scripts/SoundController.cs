@@ -12,12 +12,13 @@ namespace _Game.Scripts {
 
         [SerializeField] private AudioSource _currentMusic;
         [SerializeField] private AudioSource _nextMusic;
-
         [SerializeField] private AudioClip[] _clips;
 
         [SerializeField] private float globalVolume = 1f;
         [SerializeField] private float musicSwitchFadeDuration = 0.5f;
         [SerializeField] private bool isMuted = false;
+
+        
         
 
         private readonly List<AudioSource> _soundSources = new List<AudioSource>();
@@ -63,6 +64,22 @@ namespace _Game.Scripts {
                 .AppendCallback(()=> {
                     source.Stop();
                     _soundSources.Remove(source);
+                });
+        }
+
+        public void StopMusic(float fade = 0f) {
+            if (!_currentMusic.isPlaying) {
+                _currentMusic.clip = null;
+                return;
+            }
+
+            _currentMusic.DOFade(0f, fade);
+
+            DOTween.Sequence()
+                .AppendInterval(fade)
+                .AppendCallback(()=> {
+                    _currentMusic.Stop();
+                    _currentMusic.clip = null;
                 });
         }
 
@@ -114,6 +131,14 @@ namespace _Game.Scripts {
             return _currentMusic;
         }
 
+        public float GetGlobalVolume() {
+            return globalVolume;
+        }
+
+        public void SetGlobalVolume(float volume) {
+            globalVolume = volume;
+        }
+    
         public float GetGlobalVolumeMultiplier() {
             float multiplier = isMuted ? 0.0001f : 1f;
             return globalVolume * multiplier;
