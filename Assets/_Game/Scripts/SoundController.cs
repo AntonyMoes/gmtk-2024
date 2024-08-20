@@ -22,6 +22,7 @@ namespace _Game.Scripts {
 
         private readonly List<AudioSource> _soundSources = new List<AudioSource>();
         private Tween _musicTween;
+        private Tween _musicLoopTween;
 
         public AudioSource PlaySound(
             string soundName, 
@@ -77,16 +78,13 @@ namespace _Game.Scripts {
             _musicTween?.Kill();
 
             // Starting the music in the second player
-            _nextMusic.clip = _clips.First(clip => clip.name == musicName);
+            _nextMusic.clip = _clips.FirstOrDefault(clip => clip.name == musicName);
             _nextMusic.volume = 0f;
             _nextMusic.Play();
             _nextMusic.DOFade(volume * GetGlobalVolumeMultiplier(), musicSwitchFadeDuration);
 
             // Swapping the players
-            AudioSource _temp;
-            _temp = _currentMusic;
-            _currentMusic = _nextMusic;
-            _nextMusic = _temp;
+            (_currentMusic, _nextMusic) = (_nextMusic, _currentMusic);
 
             // If we had something playing in the first player =>
             // fade down & stop the player afterwards
@@ -100,10 +98,12 @@ namespace _Game.Scripts {
                     });
             } 
 
-            // Loop
-            DOTween.Sequence()
-                .AppendInterval(_currentMusic.clip.length - musicSwitchFadeDuration)
-                .AppendCallback(() => PlayMusic(musicName, volume));
+            if (_currentMusic.clip != null) {
+                // Loop
+                DOTween.Sequence()
+                    .AppendInterval(_currentMusic.clip.length - musicSwitchFadeDuration)
+                    .AppendCallback(() => PlayMusic(musicName, volume));
+            }
 
             return _currentMusic;
         }

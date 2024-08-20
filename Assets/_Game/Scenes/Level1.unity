@@ -309,6 +309,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _checkpointController: {fileID: 4792420238353285808}
   _canClimb: 0
+  _music: 1_the_bottom
+  _musicVolume: 0.5
 --- !u!1 &1756086432
 GameObject:
   m_ObjectHideFlags: 0

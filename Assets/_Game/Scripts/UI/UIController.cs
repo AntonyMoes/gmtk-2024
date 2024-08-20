@@ -22,6 +22,9 @@ namespace _Game.Scripts.UI {
         [SerializeField] private SelectLevelMenu _selectLevelMenu;
         public SelectLevelMenu SelectLevelMenu => _selectLevelMenu;
 
+        [SerializeField] private LevelMenu _levelMenu;
+        public LevelMenu LevelMenu => _levelMenu;
+
         [SerializeField] private UIElement _restartScreen;
         public UIElement RestartScreen => _restartScreen;
 
@@ -32,7 +35,7 @@ namespace _Game.Scripts.UI {
         private UIElement[] _elements;
 
         private void Awake() {
-            _elements = new UIElement[] { _mainMenu, _selectLevelMenu };
+            _elements = new UIElement[] { _mainMenu, _selectLevelMenu, _levelMenu };
             foreach (var element in _elements) {
                 element.State.Subscribe(OnStateChange);
             }
