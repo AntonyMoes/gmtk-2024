@@ -102,7 +102,10 @@ namespace _Game.Scripts {
                 // Loop
                 DOTween.Sequence()
                     .AppendInterval(_currentMusic.clip.length - musicSwitchFadeDuration)
-                    .AppendCallback(() => PlayMusic(musicName, volume));
+                    .AppendCallback(() => {
+                        if (_currentMusic.clip.name != musicName) return;
+                        PlayMusic(musicName, volume);
+                    });
             }
 
             return _currentMusic;
