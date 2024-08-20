@@ -331,7 +331,7 @@ namespace _Game.Scripts {
             }
 
             SetState(State.Jumping);
-            SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.2f);
+            SoundController.Instance.PlaySound(IsMetalGround() ? "jump_metal" : "jump_default", 0.2f, 0.7f);
             _velocity.y = 0;
             _velocity += normal * force;
         }
