@@ -103,6 +103,7 @@ namespace _Game.Scripts.Climbing {
                 .Insert(0, pathTween)
                 .Insert(0, rotationTween)
                 .OnComplete(() => {
+                    SoundController.Instance.PlaySound("pickaxe", 0.1f, Random.Range(0.6f, 0.9f));
                     _currentAnimation = null;
                     info.InAnimation = false;
                 })

@@ -283,12 +283,6 @@ namespace _Game.Scripts {
                 } else {
                     SoundController.Instance.StopSound("slide", 0.1f);
                 }
-            } else if (_state.Value == State.Climbing) {
-                if (speed.magnitude > 0) {
-                    SoundController.Instance.PlaySound("climbing", 0.1f, 0.8f, false);
-                } else {
-                    SoundController.Instance.StopSound("climbing", 0.1f);
-                }
             }
         }
 
@@ -473,6 +467,9 @@ namespace _Game.Scripts {
             }
 
             switch (newState) {
+                case State.Climbing:
+                    SoundController.Instance.PlaySound("pickaxe", 0.2f, 0.8f);
+                    break;
                 case State.Grounded when _velocity.y < -5f:
                     var sound = IsMetalGround() ? "land_metal" : "land_default";
                     SoundController.Instance.PlaySound(sound, 0.05f, 1f, false);
