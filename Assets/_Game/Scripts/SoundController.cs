@@ -70,7 +70,7 @@ namespace _Game.Scripts {
             foreach (AudioSource ss in _soundSources) {
                 ss.Stop();
             }
-            _currentMusic.Stop();
+            // _currentMusic.Stop();
         }
 
         

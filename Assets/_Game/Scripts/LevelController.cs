@@ -41,6 +41,7 @@ namespace _Game.Scripts {
         }
 
         public void Deactivate() {
+            SoundController.Instance.StopAllSounds();
             SoundController.Instance.PlayMusic(null, 0);
             _active = false;
         }
@@ -87,7 +88,6 @@ namespace _Game.Scripts {
         }
 
         private void EndGame() {
-            SoundController.Instance.StopAllSounds();
             KillPlayer();
         }
 
