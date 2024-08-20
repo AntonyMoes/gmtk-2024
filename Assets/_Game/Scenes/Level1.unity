@@ -481,9 +481,42 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2907770358907931747, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
+      propertyPath: m_text
+      value: <wave>Press <color=#46FFFF>Q</color=#46FFFF> to open menu</wave>
+      objectReference: {fileID: 0}
     - target: {fileID: 4035878037491833633, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
       propertyPath: m_Name
       value: Level1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5319466403260973952, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
+      propertyPath: m_text
+      value: <wave>Use <color=#46FFFF>Space</color=#46FFFF> to jump</wave>
+      objectReference: {fileID: 0}
+    - target: {fileID: 6087541598671543985, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
+      propertyPath: m_text
+      value: '<wave>Use your <color=#46FFFF>mouse</color=#46FFFF>
+
+        to look
+        around</wave>'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6340209798861018769, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
+      propertyPath: m_text
+      value: <wave>Use <color=#46FFFF>WASD</color=#46FFFF> to move</wave>
+      objectReference: {fileID: 0}
+    - target: {fileID: 6497058263132408773, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
+      propertyPath: m_text
+      value: <wave>Hold <color=#46FFFF>Shift</color=#46FFFF> to run</wave>
+      objectReference: {fileID: 0}
+    - target: {fileID: 6581684519640966462, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
+      propertyPath: m_text
+      value: '<wave>There are multiple
+
+        checkpoints on the level
+
+
+        Press
+        <color=#46FFFF>R</color=#46FFFF> to return to the last one</wave>'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c5a246802760ab4c9a70a47837b3547, type: 3}
