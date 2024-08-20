@@ -17,10 +17,18 @@ namespace _Game.Scripts.Interaction {
         
         private Interactable _currentInteractable;
         private UpdatedValue<bool> _canInteract;
+        private Action _pickupPickaxe;
 
-        public void Init(Transform origin, IEnumerable<Collider> ignoredColliders) {
+        public void Init(Transform origin, IEnumerable<Collider> ignoredColliders, Action pickupPickaxe) {
             _origin = origin;
             _ignoredColliders = new HashSet<Collider>(ignoredColliders);
+            _pickupPickaxe = pickupPickaxe;
+        }
+
+        public void Pickup(PickaxePickup pickaxe) {
+            SoundController.Instance.PlaySound("key", 0.1f);
+            // TODO sound pickaxe
+            _pickupPickaxe?.Invoke();
         }
 
         public void Pickup(Pickup item) {

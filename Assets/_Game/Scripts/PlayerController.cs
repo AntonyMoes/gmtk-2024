@@ -66,7 +66,7 @@ namespace _Game.Scripts {
             _originalParent = transform.parent;
 
             var ignoredColliders = GetComponentsInChildren<Collider>();
-            _interactor.Init(_camera.CameraTransform, ignoredColliders);
+            _interactor.Init(_camera.CameraTransform, ignoredColliders, () => SetCanClimb(true));
             _climbingComponent.Init(() => _maxSlope, ignoredColliders);
             _staminaProgressBar.Load(0f, _climbingComponent.MaxStamina);
 
@@ -81,10 +81,13 @@ namespace _Game.Scripts {
         }
 
         public ReloadData GetReloadData() {
-            return _interactor.GetReloadData();
+            var data = _interactor.GetReloadData();
+            data.CanClimb = _canClimb;
+            return data;
         }
 
         public void ReloadInTheSameLevel(ReloadData data) {
+            SetCanClimb(data.CanClimb);
             _interactor.ReloadInTheSameLevel(data);
         }
 

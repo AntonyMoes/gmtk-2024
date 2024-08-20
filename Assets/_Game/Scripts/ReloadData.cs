@@ -2,6 +2,7 @@
 
 namespace _Game.Scripts {
     public class ReloadData {
-        public IEnumerable<string> Items { get; set; }
+        public IEnumerable<string> Items;
+        public bool CanClimb;
     }
 }

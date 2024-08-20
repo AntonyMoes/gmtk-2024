@@ -1038,6 +1038,23 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &398227549 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5662204002648782084, guid: 4e264702c3385ad478b29f4adcf50bfa, type: 3}
+  m_PrefabInstance: {fileID: 1533427302473131921}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &398227550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398227549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f74fe57b3f44c448518b309606159c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &427493872
 GameObject:
   m_ObjectHideFlags: 0
@@ -1160,11 +1177,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 11.175329, y: 7.90024, z: 11.28216}
   m_Center: {x: -5.4169645, y: 3.45012, z: -0.9360819}
---- !u!4 &532145969 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9046313835561232261, guid: 4e264702c3385ad478b29f4adcf50bfa, type: 3}
-  m_PrefabInstance: {fileID: 1533427302473131921}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &630822134
 GameObject:
   m_ObjectHideFlags: 0
@@ -2535,7 +2547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _checkpointController: {fileID: 4682260109480577475}
-  _canClimb: 1
+  _canClimb: 0
 --- !u!1 &1356355653
 GameObject:
   m_ObjectHideFlags: 0
@@ -4436,8 +4448,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5662204002648782082, guid: 4e264702c3385ad478b29f4adcf50bfa, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e264702c3385ad478b29f4adcf50bfa, type: 3}
+--- !u!4 &1533427302473131922 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5662204002434245648, guid: 4e264702c3385ad478b29f4adcf50bfa, type: 3}
+  m_PrefabInstance: {fileID: 1533427302473131921}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3486103962035558699
 Transform:
   m_ObjectHideFlags: 0
@@ -4464,7 +4485,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8004483585718928155}
-  - {fileID: 532145969}
+  - {fileID: 1533427302473131922}
   - {fileID: 630822135}
   m_Father: {fileID: 1347079072}
   m_RootOrder: 1
