@@ -2701,6 +2701,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _debugText: {fileID: 1000091518}
+  _debug: {fileID: 1350531820}
+  _help: {fileID: 1828971259}
   _staminaProgressBar: {fileID: 343333592}
   _mainMenu: {fileID: 126952394}
   _loadingScreen: {fileID: 233501322}
