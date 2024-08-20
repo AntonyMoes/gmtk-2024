@@ -7478,7 +7478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetPosition: {x: 23.4, y: 120.9, z: -1.1}
-  _time: 10
+  _time: 15
   _walls: {fileID: 1604080138394860662}
 --- !u!65 &993538870386788037
 BoxCollider:

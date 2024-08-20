@@ -30,6 +30,10 @@ namespace _Game.Scripts {
             }
         }
 
+        private Vector3 _contactCastPoint;
+        private Vector3 _contactCastRay;
+        
+
         private readonly List<Contact> _lastContacts = new List<Contact>();
         private readonly List<Contact> _contacts = new List<Contact>();
         private void OnDrawGizmos() {
@@ -45,6 +49,9 @@ namespace _Game.Scripts {
                 Gizmos.DrawSphere(contact.Point, .2f);
                 Gizmos.DrawLine(contact.Point, contact.Point + contact.Normal);
             }
+            
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(_contactCastPoint, _contactCastPoint + _contactCastRay);
         }
 
         private readonly RaycastHit[] _hitBuffer = new RaycastHit[10];
@@ -60,7 +67,9 @@ namespace _Game.Scripts {
             var point = other.ClosestPoint(from);
             point = point == from ? other.ClosestPointOnBounds(from) : point;
             var vector = point - from;
-            var hitCount = Physics.RaycastNonAlloc(from, vector * 1.1f, _hitBuffer);
+            _contactCastPoint = from;
+            _contactCastRay = vector * 1.1f;
+            var hitCount = Physics.RaycastNonAlloc(from, vector, _hitBuffer, vector.magnitude * 1.1f);
             for (var i = 0; i < hitCount; i++) {
                 var hit = _hitBuffer[i];
                 if (hit.collider != other) {
