@@ -33,6 +33,8 @@ namespace _Game.Scripts {
         }
 
         private void Start() {
+            SoundController.Instance.SetGlobalVolume(1f);
+
             if (AutoStartLevel != null) {
                 var level = AutoStartLevel;
                 AutoStartLevel = null;
@@ -115,8 +117,8 @@ namespace _Game.Scripts {
             }
         }
 
-        public void Kill() {
-            _currentLevel.Kill();
+        public void Kill(bool withScreen = true) {
+            _currentLevel.Kill(withScreen);
         }
 
         public void StartEndCutscene() {
