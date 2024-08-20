@@ -14,19 +14,29 @@ namespace _Game.Scripts.UI {
             _image.color = Color.white;
             _mainGroup.alpha = 0f;
             _contentGroup.alpha = 0f;
+
+            SoundController.Instance.StopMusic(2.6f);
+            DOTween.To(
+                SoundController.Instance.GetGlobalVolume, 
+                SoundController.Instance.SetGlobalVolume, 
+                0f, 
+                2.6f
+            );
+
             DOTween.Sequence()
                 .AppendInterval(.6f)
                 .Append(_mainGroup.DOFade(1f, 5f))
                 .AppendInterval(2f)
                 .AppendCallback(() => {
                     _image.color = Color.black;
+                    App.Instance.Kill();
                     SoundController.Instance.StopAllSounds(true);
                 })
                 .AppendInterval(2f)
                 .Append(_contentGroup.DOFade(1f, .5f))
                 .AppendInterval(1f)
                 .AppendCallback(() => {
-                    SoundController.Instance.PlaySound("wake_up");
+                    SoundController.Instance.PlaySound("wake_up", 0.5f).DOFade(1.5f, 7f);
                 })
                 .AppendInterval(6f)
                 .Append(_contentGroup.DOFade(0f, 2f))
