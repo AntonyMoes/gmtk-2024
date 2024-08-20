@@ -15,10 +15,11 @@ namespace _Game.Scripts {
 
         private LevelController _currentLevel;
         private int _currentLevelIndex;
+        private bool _showStartCutscene;
 
         public static bool DevBuild => Application.isEditor || Debug.isDebugBuild;
 
-        [CanBeNull] public static string AutoStartLevel= null;
+        [CanBeNull] public static string AutoStartLevel = null;
 
         private void Awake() {
             DontDestroyOnLoad(gameObject);
@@ -56,6 +57,7 @@ namespace _Game.Scripts {
         }
 
         private void StartLevel() {
+            _showStartCutscene = true;
             StartLevelFromMenu(_levels[0]);
         }
 
@@ -75,6 +77,11 @@ namespace _Game.Scripts {
             _currentLevel = controller;
             controller.Init(_uiController, _camera, _playerPrefab, _levelMaterial);
             _uiController.LoadingScreen.TriggerHide();
+
+            if (_showStartCutscene) {
+                _showStartCutscene = false;
+                _uiController.StartUICutscene.Show();
+            }
         }
 
         public void FinishLevel(bool complete) {

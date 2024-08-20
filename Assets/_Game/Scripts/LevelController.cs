@@ -50,7 +50,7 @@ namespace _Game.Scripts {
             _player = Instantiate(_playerPrefab, _checkpointController.Spawn);
             _player.transform.position = spawn.position;
             _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
-            _player.Init(_camera, _uiController.DebugText, _uiController.StaminaProgressBar, _canClimb, _uiController.UiActive);
+            _player.Init(_camera, _uiController.DebugText, _uiController.StaminaProgressBar, _canClimb, _uiController.UiNoLookingActive);
 
             if (reloadData != null) {
                 _player.ReloadInTheSameLevel(reloadData);
@@ -75,6 +75,7 @@ namespace _Game.Scripts {
         }
 
         public void Kill() {
+            _uiController.LevelMenu.Hide();
             _uiController.RestartScreen.Show();
             EndGame();
         }
@@ -94,12 +95,12 @@ namespace _Game.Scripts {
             if (!_active) {
                 return;
             }
-            
+
             if (Input.GetButtonDown("Restart")) {
                 RestartFromCheckpoint();
             }
 
-            if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (Input.GetButtonDown("Menu") && !_uiController.UiNoLevelMenuActive.Value) {
                 _uiController.LevelMenu.Toggle();
             }
 
