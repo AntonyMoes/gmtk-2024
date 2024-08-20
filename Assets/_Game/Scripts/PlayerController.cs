@@ -80,8 +80,12 @@ namespace _Game.Scripts {
             _climbingComponent.enabled = canClimb;
         }
 
-        public void ReloadInTheSameLevel(PlayerController previous) {
-            _interactor.ReloadInTheSameLevel(previous._interactor);
+        public ReloadData GetReloadData() {
+            return _interactor.GetReloadData();
+        }
+
+        public void ReloadInTheSameLevel(ReloadData data) {
+            _interactor.ReloadInTheSameLevel(data);
         }
 
         public void ToggleNoClip() {
