@@ -34,6 +34,9 @@ namespace _Game.Scripts.UI {
         [SerializeField] private StartUICutscene _startUICutscene;
         public StartUICutscene StartUICutscene => _startUICutscene;
 
+        [SerializeField] private EndUICutscene _endUICutscene;
+        public EndUICutscene EndUICutscene => _endUICutscene;
+
 
         private readonly UpdatedValue<bool> _uiActive = new UpdatedValue<bool>();
         public IUpdatedValue<bool> UiActive => _uiActive;
@@ -61,7 +64,7 @@ namespace _Game.Scripts.UI {
                 element.State.Subscribe(OnStateChangeNoLooking);
             }
 
-            _elementsNoLevelMenu = new UIElement[] { _loadingScreen, _startUICutscene, _restartScreen };
+            _elementsNoLevelMenu = new UIElement[] { _loadingScreen, _startUICutscene, _restartScreen, _endUICutscene };
             foreach (var element in _elementsNoLevelMenu) {
                 element.State.Subscribe(OnStateChangeNoLevelMenu);
             }

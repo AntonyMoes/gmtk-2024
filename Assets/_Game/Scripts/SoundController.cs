@@ -66,11 +66,14 @@ namespace _Game.Scripts {
                 });
         }
 
-        public void StopAllSounds() {
+        public void StopAllSounds(bool music) {
             foreach (AudioSource ss in _soundSources) {
                 ss.Stop();
             }
-            // _currentMusic.Stop();
+
+            if (music) {
+                _currentMusic.Stop();
+            }
         }
 
         
