@@ -13,10 +13,9 @@ namespace _Game.Scripts.UI {
 
         void DoBeep()
         {
-            Debug.Log("BEEP");
             var playerPosition = FindObjectOfType<PlayerController>().gameObject.transform.position;
             var distanceToPlayer = (playerPosition - transform.position).magnitude;
-            Debug.Log(distanceToPlayer);
+
             if (distanceToPlayer > 250f) {
                 return;
             }
