@@ -180,12 +180,14 @@ namespace _Game.Scripts {
             if (_state.Value == State.Climbing) {
                 if (jumpInput) {
                     Jump();
-                } else if (climbInput || _climbingComponent.CantClimb) {
+                    return;
+                }
+                if (climbInput || _climbingComponent.CantClimb) {
                     SetState(State.Falling);
-                } else {
-                    HandleClimbing(deltaTime);
+                    return;
                 }
 
+                HandleClimbing(deltaTime);
                 return;
             }
 
@@ -511,6 +513,7 @@ namespace _Game.Scripts {
         private void HandleClimbing(float deltaTime) {
             if (_climbingComponent.ClimbContact.Normal != _lastClimbingNormal) {
                 MoveToClimbingContact();
+                return;
             }
 
             var climbingInput = (transform.right * _moveInput.x + transform.up * _moveInput.y).normalized;

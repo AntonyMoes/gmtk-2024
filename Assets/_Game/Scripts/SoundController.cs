@@ -10,11 +10,13 @@ namespace _Game.Scripts {
     public class SoundController : SingletonBehaviour<SoundController> {
         [SerializeField] private GameObject _sounds;
 
-        [SerializeField] private AudioSource _music;
+        [SerializeField] private AudioSource _currentMusic;
+        [SerializeField] private AudioSource _nextMusic;
 
         [SerializeField] private AudioClip[] _clips;
 
         [SerializeField] private float globalVolume = 1f;
+        [SerializeField] private float musicSwitchFadeDuration = 0.5f;
         [SerializeField] private bool isMuted = false;
         
 
@@ -67,31 +69,43 @@ namespace _Game.Scripts {
             foreach (AudioSource ss in _soundSources) {
                 ss.Stop();
             }
-            _music.Stop();
+            _currentMusic.Stop();
         }
 
+        
         public AudioSource PlayMusic(string musicName, float volume = 1f) {
             _musicTween?.Kill();
-            const float fadeDuration = 0.3f;
-            if (_music.isPlaying) {
-                _musicTween = DOTween.Sequence()
-                    .Append(_music.DOFade(0f, fadeDuration))
-                    .AppendCallback(SetNew)
-                    .Append(_music.DOFade(volume * GetGlobalVolumeMultiplier(), fadeDuration));
-            } else {
-                SetNew();
-                _music.DOFade(volume * GetGlobalVolumeMultiplier(), fadeDuration);
-            }
 
-            return _music;
+            // Starting the music in the second player
+            _nextMusic.clip = _clips.First(clip => clip.name == musicName);
+            _nextMusic.volume = 0f;
+            _nextMusic.Play();
+            _nextMusic.DOFade(volume * GetGlobalVolumeMultiplier(), musicSwitchFadeDuration);
 
-            void SetNew() {
-                _music.Stop();
-                _music.clip = _clips.First(clip => clip.name == musicName);
-                _music.loop = true;
-                _music.volume = 0f;
-                _music.Play();
-            }
+            // Swapping the players
+            AudioSource _temp;
+            _temp = _currentMusic;
+            _currentMusic = _nextMusic;
+            _nextMusic = _temp;
+
+            // If we had something playing in the first player =>
+            // fade down & stop the player afterwards
+            if (_nextMusic.isPlaying) {
+                _nextMusic.DOFade(0f, musicSwitchFadeDuration);
+                DOTween.Sequence()
+                    .AppendInterval(musicSwitchFadeDuration)
+                    .AppendCallback(() => {
+                        _nextMusic.Stop();
+                        _nextMusic.clip = null;
+                    });
+            } 
+
+            // Loop
+            DOTween.Sequence()
+                .AppendInterval(_currentMusic.clip.length - musicSwitchFadeDuration)
+                .AppendCallback(() => PlayMusic(musicName, volume));
+
+            return _currentMusic;
         }
 
         public float GetGlobalVolumeMultiplier() {
@@ -106,7 +120,7 @@ namespace _Game.Scripts {
                 multiplier *= 10000f;
             }
             _soundSources.Where(ss => ss.isPlaying).ForEach(ss => { ss.volume *= multiplier; });
-            _music.volume *= multiplier;
+            _currentMusic.volume *= multiplier;
         }
 
         private void OnDestroy() {
