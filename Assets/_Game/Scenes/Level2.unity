@@ -3122,9 +3122,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TMProText: {fileID: 1245682825}
-  WaveAmount: 0.0002
-  WaveSpeed: 0.005
-  WaveSeparation: 0.3
+  WaveAmount: 0.0001
+  WaveSpeed: 0.006
+  WaveSeparation: 0.4
 --- !u!1001 &1247979938
 PrefabInstance:
   m_ObjectHideFlags: 0
