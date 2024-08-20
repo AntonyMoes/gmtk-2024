@@ -73,6 +73,7 @@ namespace _Game.Scripts.Climbing {
         }
 
         public void LatchOff() {
+            Stamina = Mathf.Max(Stamina - 1, 0f);
             _animator.LatchOff();
             ClimbContact = null;
         }
