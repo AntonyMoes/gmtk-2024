@@ -25,14 +25,14 @@ namespace _Game.Scripts {
 
             _uiController.UiActive.Subscribe(SetupCursor, true);
             _uiController.MainMenu.Setup(StartLevel, OpenSelectLevel);
-            _uiController.SelectLevelMenu.Setup(_levels, StartLevel, CloseSelectLevel);
+            _uiController.SelectLevelMenu.Setup(_levels, StartLevelFromMenu, CloseSelectLevel);
         }
 
         private void Start() {
             if (AutoStartLevel != null) {
                 var level = AutoStartLevel;
                 AutoStartLevel = null;
-                StartLevel(level);
+                StartLevelFromMenu(level);
                 return;
             }
 
@@ -55,12 +55,16 @@ namespace _Game.Scripts {
         }
 
         private void StartLevel() {
-            StartLevel(_levels[0]);
+            StartLevelFromMenu(_levels[0]);
         }
 
+        private void StartLevelFromMenu(string level) {
+            _uiController.LoadingScreen.ShowInstant();
+            StartLevel(level);
+        }
+        
         private void StartLevel(string level) {
             _currentLevelIndex = _levels.IndexOf(level);
-            _uiController.LoadingScreen.Show();
             _uiController.MainMenu.Hide();
             _uiController.SelectLevelMenu.Hide();
             SceneManager.LoadScene(level, LoadSceneMode.Single);
@@ -69,15 +73,18 @@ namespace _Game.Scripts {
         public void InitLevel(LevelController controller) {
             _currentLevel = controller;
             controller.Init(_uiController, _camera, _playerPrefab, _levelMaterial);
-            _uiController.LoadingScreen.Hide();
+            _uiController.LoadingScreen.TriggerHide();
         }
 
         public void FinishLevel() {
             _currentLevel = null;
 
             if (_currentLevelIndex < _levels.Length - 1) {
-                StartLevel(_levels[_currentLevelIndex + 1]);
+                _uiController.LoadingScreen.Show(() => {
+                    StartLevel(_levels[_currentLevelIndex + 1]);
+                });
             } else {
+                // TODO FINISH GAME
                 Start();
             }
         }

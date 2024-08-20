@@ -555,6 +555,7 @@ GameObject:
   - component: {fileID: 233501318}
   - component: {fileID: 233501321}
   - component: {fileID: 233501320}
+  - component: {fileID: 233501322}
   - component: {fileID: 233501319}
   m_Layer: 5
   m_Name: LoadingScreen
@@ -576,25 +577,25 @@ RectTransform:
   m_Children:
   - {fileID: 2096228779}
   m_Father: {fileID: 1564829949}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &233501319
-MonoBehaviour:
+--- !u!225 &233501319
+CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 233501317}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 553df228f2f74607b834d05c3c2925ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &233501320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -633,6 +634,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 233501317}
   m_CullTransparentMesh: 1
+--- !u!114 &233501322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233501317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55f9e54f9c9e47a0bfd4c1d59e50baa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _group: {fileID: 233501319}
 --- !u!1 &237306728
 GameObject:
   m_ObjectHideFlags: 0
@@ -1201,7 +1215,7 @@ RectTransform:
   - {fileID: 934716391}
   - {fileID: 371325244}
   m_Father: {fileID: 1564829949}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -2352,7 +2366,7 @@ MonoBehaviour:
   _debugText: {fileID: 1000091518}
   _staminaProgressBar: {fileID: 343333592}
   _mainMenu: {fileID: 126952394}
-  _loadingScreen: {fileID: 233501319}
+  _loadingScreen: {fileID: 233501322}
   _selectLevelMenu: {fileID: 2040701083}
   _restartScreen: {fileID: 607444767}
 --- !u!1 &1350531820
@@ -2592,8 +2606,8 @@ RectTransform:
   m_Children:
   - {fileID: 126952391}
   - {fileID: 2040701079}
-  - {fileID: 233501318}
   - {fileID: 607444766}
+  - {fileID: 233501318}
   m_Father: {fileID: 215032966}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

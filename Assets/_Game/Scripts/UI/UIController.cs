@@ -16,8 +16,8 @@ namespace _Game.Scripts.UI {
         [SerializeField] private MainMenu _mainMenu;
         public MainMenu MainMenu => _mainMenu;
 
-        [SerializeField] private UIElement _loadingScreen;
-        public UIElement LoadingScreen => _loadingScreen;
+        [SerializeField] private LoadingScreen _loadingScreen;
+        public LoadingScreen LoadingScreen => _loadingScreen;
 
         [SerializeField] private SelectLevelMenu _selectLevelMenu;
         public SelectLevelMenu SelectLevelMenu => _selectLevelMenu;
