@@ -310,6 +310,7 @@ GameObject:
   - component: {fileID: 63244015}
   - component: {fileID: 63244014}
   - component: {fileID: 63244013}
+  - component: {fileID: 63244016}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -368,7 +369,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: These too!
+  m_text: <wave>These too!</wave>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -445,6 +446,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 63244011}
   m_CullTransparentMesh: 1
+--- !u!114 &63244016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63244011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6452a4f8487cb174fbd2cd3e23dd1496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TMProText: {fileID: 63244014}
+  WaveAmount: 0.0002
+  WaveSpeed: 0.005
+  WaveSeparation: 0.3
 --- !u!1 &136965041
 GameObject:
   m_ObjectHideFlags: 0
@@ -1143,6 +1160,11 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 11.175329, y: 7.90024, z: 11.28216}
   m_Center: {x: -5.4169645, y: 3.45012, z: -0.9360819}
+--- !u!4 &532145969 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9046313835561232261, guid: 4e264702c3385ad478b29f4adcf50bfa, type: 3}
+  m_PrefabInstance: {fileID: 1533427302473131921}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &630822134
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,6 +1687,7 @@ GameObject:
   - component: {fileID: 1050425862}
   - component: {fileID: 1050425861}
   - component: {fileID: 1050425860}
+  - component: {fileID: 1050425863}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1723,10 +1746,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Climb further with WASD
+  m_text: '<wave>Climb further with WASD</wave>
 
 
-    Keep track of your stamina!'
+    <wave>Keep track of your stamina!</wave>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1803,6 +1826,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1050425858}
   m_CullTransparentMesh: 1
+--- !u!114 &1050425863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1050425858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6452a4f8487cb174fbd2cd3e23dd1496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TMProText: {fileID: 1050425861}
+  WaveAmount: 0.0001
+  WaveSpeed: 0.005
+  WaveSeparation: 0.5
 --- !u!1 &1053915960
 GameObject:
   m_ObjectHideFlags: 0
@@ -1976,6 +2015,7 @@ GameObject:
   - component: {fileID: 1245682826}
   - component: {fileID: 1245682825}
   - component: {fileID: 1245682824}
+  - component: {fileID: 1245682827}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -2034,9 +2074,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Jump and press F
+  m_text: '<wave>Jump and press F</wave>
 
-    to latch onto a wall'
+    <wave>to latch onto a wall</wave>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2113,6 +2153,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1245682822}
   m_CullTransparentMesh: 1
+--- !u!114 &1245682827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1245682822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6452a4f8487cb174fbd2cd3e23dd1496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TMProText: {fileID: 1245682825}
+  WaveAmount: 0.0002
+  WaveSpeed: 0.005
+  WaveSeparation: 0.3
 --- !u!1 &1262545902
 GameObject:
   m_ObjectHideFlags: 0
@@ -2125,6 +2181,7 @@ GameObject:
   - component: {fileID: 1262545906}
   - component: {fileID: 1262545905}
   - component: {fileID: 1262545904}
+  - component: {fileID: 1262545907}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -2183,11 +2240,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Press Space to jump in the direction you are looking
+  m_text: '<wave>Press Space to jump in the direction you are looking</wave>
 
 
-    (you can press
-    F to just fall down)'
+    <wave>(you
+    can press F to just fall down)</wave>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2264,6 +2321,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1262545902}
   m_CullTransparentMesh: 1
+--- !u!114 &1262545907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262545902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6452a4f8487cb174fbd2cd3e23dd1496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TMProText: {fileID: 1262545905}
+  WaveAmount: 0.0001
+  WaveSpeed: 0.005
+  WaveSeparation: 0.5
 --- !u!1 &1265594660
 GameObject:
   m_ObjectHideFlags: 0
@@ -3112,6 +3185,7 @@ GameObject:
   - component: {fileID: 1617350409}
   - component: {fileID: 1617350408}
   - component: {fileID: 1617350407}
+  - component: {fileID: 1617350410}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -3170,7 +3244,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You can traverse angles while climbing
+  m_text: <wave>You can traverse angles while climbing</wave>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3247,6 +3321,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1617350405}
   m_CullTransparentMesh: 1
+--- !u!114 &1617350410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617350405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6452a4f8487cb174fbd2cd3e23dd1496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TMProText: {fileID: 1617350408}
+  WaveAmount: 0.0002
+  WaveSpeed: 0.005
+  WaveSeparation: 0.3
 --- !u!1 &1686700765
 GameObject:
   m_ObjectHideFlags: 0
@@ -3386,6 +3476,7 @@ GameObject:
   - component: {fileID: 1718841683}
   - component: {fileID: 1718841682}
   - component: {fileID: 1718841681}
+  - component: {fileID: 1718841684}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -3444,7 +3535,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: And you can climb over edges
+  m_text: <wave>And you can climb over edges</wave>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3521,6 +3612,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1718841679}
   m_CullTransparentMesh: 1
+--- !u!114 &1718841684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718841679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6452a4f8487cb174fbd2cd3e23dd1496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TMProText: {fileID: 1718841682}
+  WaveAmount: 0.0002
+  WaveSpeed: 0.005
+  WaveSeparation: 0.3
 --- !u!1 &1736683802
 GameObject:
   m_ObjectHideFlags: 0
@@ -4345,11 +4452,6 @@ Transform:
   m_Father: {fileID: 8004483585718928155}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &3704304350345408122 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2751559940413737451, guid: 4e264702c3385ad478b29f4adcf50bfa, type: 3}
-  m_PrefabInstance: {fileID: 1533427302473131921}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4641687455715359411
 Transform:
   m_ObjectHideFlags: 0
@@ -4362,7 +4464,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8004483585718928155}
-  - {fileID: 3704304350345408122}
+  - {fileID: 532145969}
   - {fileID: 630822135}
   m_Father: {fileID: 1347079072}
   m_RootOrder: 1
