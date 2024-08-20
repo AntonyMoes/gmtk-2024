@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace _Game.Scripts {
@@ -48,9 +49,11 @@ namespace _Game.Scripts {
 
         private readonly RaycastHit[] _hitBuffer = new RaycastHit[10];
 
+        [CanBeNull]
         public Contact GetContact(Collider other) {
             if (!_collisions.Contains(other)) {
-                throw new Exception($"{other.name} is not in collisions!");
+                return null;
+                // throw new Exception($"{other.name} is not in collisions!");
             }
 
             var from = _collider.bounds.center;
@@ -72,7 +75,7 @@ namespace _Game.Scripts {
                 return contact;
             }
 
-            throw new Exception();
+            return null;
         }
 
         private void OnTriggerExit(Collider other) {

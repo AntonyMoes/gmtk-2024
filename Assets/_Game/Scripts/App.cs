@@ -26,6 +26,7 @@ namespace _Game.Scripts {
             _uiController.UiActive.Subscribe(SetupCursor, true);
             _uiController.MainMenu.Setup(StartLevel, OpenSelectLevel);
             _uiController.SelectLevelMenu.Setup(_levels, StartLevelFromMenu, CloseSelectLevel);
+            _uiController.LevelMenu.Setup(() => FinishLevel(false));
         }
 
         private void Start() {
@@ -76,8 +77,14 @@ namespace _Game.Scripts {
             _uiController.LoadingScreen.TriggerHide();
         }
 
-        public void FinishLevel() {
+        public void FinishLevel(bool complete) {
+            _currentLevel.Deactivate();
             _currentLevel = null;
+
+            if (!complete) {
+                Start();
+                return;
+            }
 
             var lastCompleted = SaveManager.GetInt(SaveManager.IntData.LastCompletedLevel, -1);
             if (lastCompleted == -1 || _currentLevelIndex > lastCompleted) {

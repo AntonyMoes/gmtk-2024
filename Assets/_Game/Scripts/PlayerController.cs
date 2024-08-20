@@ -44,6 +44,7 @@ namespace _Game.Scripts {
         private TextMeshProUGUI _debugText;
         private ProgressBar _staminaProgressBar;
         private Transform _originalParent;
+        private IUpdatedValue<bool> _uiActive;
         private bool _canClimb;
 
         private readonly UpdatedValue<State> _state = new UpdatedValue<State>(State.None);
@@ -58,12 +59,13 @@ namespace _Game.Scripts {
 
         private bool _debugFreeze;
 
-        public void Init(CameraController camera, TextMeshProUGUI debugText, ProgressBar staminaProgressBar, bool canClimb) {
+        public void Init(CameraController camera, TextMeshProUGUI debugText, ProgressBar staminaProgressBar, bool canClimb, IUpdatedValue<bool> uiActive) {
             _camera = camera;
             _camera.SetTarget(_cameraTarget);
             _debugText = debugText;
             _staminaProgressBar = staminaProgressBar;
             _originalParent = transform.parent;
+            _uiActive = uiActive;
 
             var ignoredColliders = GetComponentsInChildren<Collider>();
             _interactor.Init(_camera.CameraTransform, ignoredColliders, () => SetCanClimb(true));
@@ -92,9 +94,7 @@ namespace _Game.Scripts {
         }
 
         public void ToggleNoClip() {
-            if (App.DevBuild) {
-                SetState(_state.Value == State.NoClip ? State.Falling : State.NoClip);
-            }
+            SetState(_state.Value == State.NoClip ? State.Falling : State.NoClip);
         }
 
         private void Start() {
@@ -243,7 +243,7 @@ namespace _Game.Scripts {
             Contact lowest = null;
             foreach (var collision in _groundCollisionTracker.Collisions) {
                 var contact = _groundCollisionTracker.GetContact(collision);
-                if ((lowest == null || contact.Point.y < lowest.Point.y) && collision.attachedRigidbody == null) {
+                if (contact != null && (lowest == null || contact.Point.y < lowest.Point.y) && collision.attachedRigidbody == null) {
                     lowest = contact;
                 }
             }
@@ -287,6 +287,10 @@ namespace _Game.Scripts {
         }
 
         private void Rotate(float horizontalRotation, float verticalRotation) {
+            if (_uiActive.Value) {
+                return;
+            }
+            
             float horizontalCameraRotation;
             if (_state.Value != State.Climbing) {
                 transform.Rotate(Vector3.up, horizontalRotation);
@@ -335,6 +339,10 @@ namespace _Game.Scripts {
         private bool CheckGroundCollision() {
             foreach (var collision in _groundCollisionTracker.Collisions) {
                 var contact = _groundCollisionTracker.GetContact(collision);
+                if (contact == null) {
+                    continue;
+                }
+
                 var angle = Vector3.Angle(Vector3.up, contact.Normal);
                 if (angle <= _maxSlope) {
                     return true;
@@ -347,6 +355,10 @@ namespace _Game.Scripts {
         private bool CheckSlidingCollision() {
             foreach (var collision in _groundCollisionTracker.Collisions) {
                 var contact = _groundCollisionTracker.GetContact(collision);
+                if (contact == null) {
+                    continue;
+                }
+
                 var angle = Vector3.Angle(Vector3.up, contact.Normal);
                 if (angle > _maxSlope && angle < 90) {
                     _slidingContact = contact;

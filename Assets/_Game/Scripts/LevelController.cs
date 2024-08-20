@@ -7,7 +7,10 @@ namespace _Game.Scripts {
     public class LevelController : MonoBehaviour {
         [SerializeField] private CheckpointController _checkpointController;
         [SerializeField] private bool _canClimb;
+        [SerializeField] private string _music;
+        [SerializeField] private float _musicVolume;
 
+        private bool _active;
         private UIController _uiController;
         private CameraController _camera;
         private PlayerController _playerPrefab;
@@ -26,13 +29,20 @@ namespace _Game.Scripts {
         }
 
         public void Init(UIController uiController, CameraController camera, PlayerController playerPrefab, PhysicMaterial levelMaterial) {
+            _active = true;
             _uiController = uiController;
             _camera = camera;
             _playerPrefab = playerPrefab;
 
             LevelUtils.SetMaterial(transform, levelMaterial);
+            SoundController.Instance.PlayMusic(_music, _musicVolume);
 
             StartGame();
+        }
+
+        public void Deactivate() {
+            SoundController.Instance.PlayMusic(null, 0);
+            _active = false;
         }
 
         private void SpawnPlayer(ReloadData reloadData = null) {
@@ -40,7 +50,7 @@ namespace _Game.Scripts {
             _player = Instantiate(_playerPrefab, _checkpointController.Spawn);
             _player.transform.position = spawn.position;
             _player.transform.rotation = Quaternion.Euler(0, spawn.rotation.eulerAngles.y, 0);
-            _player.Init(_camera, _uiController.DebugText, _uiController.StaminaProgressBar, _canClimb);
+            _player.Init(_camera, _uiController.DebugText, _uiController.StaminaProgressBar, _canClimb, _uiController.UiActive);
 
             if (reloadData != null) {
                 _player.ReloadInTheSameLevel(reloadData);
@@ -61,7 +71,6 @@ namespace _Game.Scripts {
 
         private void StartGame(ReloadData reloadData = null) {
             _uiController.RestartScreen.Hide();
-            SoundController.Instance.PlayMusic("1_the_bottom", 0.5f);
             SpawnPlayer(reloadData);
         }
 
@@ -82,17 +91,25 @@ namespace _Game.Scripts {
         }
 
         private void Update() {
+            if (!_active) {
+                return;
+            }
+            
             if (Input.GetButtonDown("Restart")) {
                 RestartFromCheckpoint();
             }
 
-            if (Input.GetButtonDown("NoClip")) {
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                _uiController.LevelMenu.Toggle();
+            }
+
+            if (App.DevBuild && Input.GetButtonDown("NoClip")) {
                 if (_player != null) {
                     _player.ToggleNoClip();
                 }
             }
 
-            if (Input.GetButtonDown("Mute")) {
+            if (App.DevBuild && Input.GetButtonDown("Mute")) {
                 if (_player != null) {
                     SoundController.Instance.ToggleMute();
                 }

@@ -9,6 +9,9 @@ namespace _Game.Scripts.UI {
     public class UIController : MonoBehaviour {
         [SerializeField] private TextMeshProUGUI _debugText;
         public TextMeshProUGUI DebugText => _debugText;
+
+        [SerializeField] private GameObject _debug;
+        [SerializeField] private GameObject _help;
         
         [SerializeField] private ProgressBar _staminaProgressBar;
         public ProgressBar StaminaProgressBar => _staminaProgressBar;
@@ -22,6 +25,9 @@ namespace _Game.Scripts.UI {
         [SerializeField] private SelectLevelMenu _selectLevelMenu;
         public SelectLevelMenu SelectLevelMenu => _selectLevelMenu;
 
+        [SerializeField] private LevelMenu _levelMenu;
+        public LevelMenu LevelMenu => _levelMenu;
+
         [SerializeField] private UIElement _restartScreen;
         public UIElement RestartScreen => _restartScreen;
 
@@ -32,9 +38,14 @@ namespace _Game.Scripts.UI {
         private UIElement[] _elements;
 
         private void Awake() {
-            _elements = new UIElement[] { _mainMenu, _selectLevelMenu };
+            _elements = new UIElement[] { _mainMenu, _selectLevelMenu, _levelMenu };
             foreach (var element in _elements) {
                 element.State.Subscribe(OnStateChange);
+            }
+
+            var debugUI = new[] { _debug, _help };
+            foreach (var ui in debugUI) {
+                ui.SetActive(App.DevBuild);
             }
         }
 

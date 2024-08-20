@@ -12,11 +12,12 @@ namespace _Game.Scripts.Interaction {
         [SerializeField] private GameObject _openedText;
 
         [Header("Door")]
-        [SerializeField] private Transform _door;
-        [SerializeField] private Vector3 _targetLocalRotation;
-        [SerializeField] private Vector3 _targetLocalPosition;
-        [SerializeField] private Ease _easing = Ease.InOutSine;
-        [SerializeField] private float _time;
+        [SerializeField] private Animator _animator;
+        // [SerializeField] private Transform _door;
+        // [SerializeField] private Vector3 _targetLocalRotation;
+        // [SerializeField] private Vector3 _targetLocalPosition;
+        // [SerializeField] private Ease _easing = Ease.InOutSine;
+        // [SerializeField] private float _time;
 
         private bool _opened;
         private bool _opening;
@@ -40,13 +41,14 @@ namespace _Game.Scripts.Interaction {
             _opened = true;
             SoundController.Instance.PlaySound("door_opening", 0.4f);
 
-            DOTween.Sequence()
-                .Insert(0, _door.DOLocalRotate(_targetLocalRotation, _time).SetEase(_easing))
-                .Insert(0, _door.DOLocalMove(_targetLocalPosition, _time).SetEase(_easing))
-                .OnComplete(EndOpening);
+            // DOTween.Sequence()
+            //     .Insert(0, _door.DOLocalRotate(_targetLocalRotation, _time).SetEase(_easing))
+            //     .Insert(0, _door.DOLocalMove(_targetLocalPosition, _time).SetEase(_easing))
+            //     .OnComplete(EndOpening);
+            _animator.Play("Open");
         }
 
-        private void EndOpening() {
+        public void EndOpening() {
             SoundController.Instance.StopSound("door_opening", 0.2f);
             SoundController.Instance.PlaySound("door_opened", 0.8f);
             _opening = false;
