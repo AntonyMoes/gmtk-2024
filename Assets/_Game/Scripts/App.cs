@@ -111,5 +111,9 @@ namespace _Game.Scripts {
         public void Kill() {
             _currentLevel.Kill();
         }
+
+        public void StartEndCutscene() {
+            _uiController.EndUICutscene.Show();
+        }
     }
 }
