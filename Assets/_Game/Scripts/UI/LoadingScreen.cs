@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _Game.Scripts.UI {
     public class LoadingScreen : UIElement {
-        [SerializeField] private CanvasGroup _group;
+        [SerializeField] private CanvasGroup _canvasGroup;
 
         private const float AnimationTime = 0.5f;
 
@@ -29,17 +29,17 @@ namespace _Game.Scripts.UI {
                     throw new ArgumentOutOfRangeException();
             }
         }
-        
+
         protected override void PerformShow(Action onDone = null) {
             var time = _instant ? 0f : AnimationTime;
             _instant = false;
-            _group.DOFade(1f, time).OnComplete(() => onDone?.Invoke());
+            _canvasGroup.DOFade(1f, time).OnComplete(() => onDone?.Invoke());
         }
 
         protected override void PerformHide(Action onDone = null) {
             var time = _instant ? 0f : AnimationTime;
             _instant = false;
-            _group.DOFade(0f, time).OnComplete(() => onDone?.Invoke());
+            _canvasGroup.DOFade(0f, time).OnComplete(() => onDone?.Invoke());
         }
     }
 }
