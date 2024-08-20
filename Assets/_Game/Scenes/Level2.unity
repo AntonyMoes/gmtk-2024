@@ -464,10 +464,11 @@ MonoBehaviour:
 
 
     <link=wave>Climb further
-    left with WASD</link>
+    left with <color=#46FFFF>WASD</color=#46FFFF></link>
 
 
-    <link=wave>Keep track of your stamina!</link>'
+    <link=wave>Keep track
+    of your stamina!</link>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84664485fe295f64886b610263b52ae8, type: 2}
   m_sharedMaterial: {fileID: -6769946547941332378, guid: 84664485fe295f64886b610263b52ae8, type: 2}
@@ -1381,31 +1382,31 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2739649186089505317, guid: 4133d09896bb53145a94f36971e3306b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.03
+      value: 8.5
       objectReference: {fileID: 0}
     - target: {fileID: 2739649186089505317, guid: 4133d09896bb53145a94f36971e3306b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.06
+      value: -2.52
       objectReference: {fileID: 0}
     - target: {fileID: 2739649186089505317, guid: 4133d09896bb53145a94f36971e3306b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.43
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 2739649186089505317, guid: 4133d09896bb53145a94f36971e3306b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.7071068
+      value: 0.92387956
       objectReference: {fileID: 0}
     - target: {fileID: 2739649186089505317, guid: 4133d09896bb53145a94f36971e3306b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7071068
+      value: -0.38268343
       objectReference: {fileID: 0}
     - target: {fileID: 2739649186089505317, guid: 4133d09896bb53145a94f36971e3306b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2739649186089505317, guid: 4133d09896bb53145a94f36971e3306b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 270
+      value: -45
       objectReference: {fileID: 0}
     - target: {fileID: 2954738667986371017, guid: 4133d09896bb53145a94f36971e3306b, type: 3}
       propertyPath: m_RootOrder
@@ -3017,8 +3018,10 @@ MonoBehaviour:
       m_Calls: []
   m_text: '<wave>Jump and press Left Mouse Button</wave>
 
-    <wave>to latch onto
-    a wall</wave>'
+    <wave><color=#46FFFF>Left
+    Mouse Button</color=#46FFFF><b></wave>
+
+    <wave>to latch onto a wall</wave>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84664485fe295f64886b610263b52ae8, type: 2}
   m_sharedMaterial: {fileID: -6769946547941332378, guid: 84664485fe295f64886b610263b52ae8, type: 2}
@@ -3303,11 +3306,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<wave>Press Space to jump in the direction you are looking</wave>
-
-
-    <wave>(you
-    can press F to just fall down)</wave>'
+  m_text: "<wave>Press <color=#46FFFF>Space</color=#46FFFF> to jump in the direction
+    you are looking</wave>\n\n<wave>(you can press \n<color=#46FFFF>Left Mouse Button</color=#46FFFF>\nto
+    just fall down)</wave>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84664485fe295f64886b610263b52ae8, type: 2}
   m_sharedMaterial: {fileID: -6769946547941332378, guid: 84664485fe295f64886b610263b52ae8, type: 2}
