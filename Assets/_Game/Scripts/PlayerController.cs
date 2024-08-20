@@ -283,6 +283,12 @@ namespace _Game.Scripts {
                 } else {
                     SoundController.Instance.StopSound("slide", 0.1f);
                 }
+            } else if (_state.Value == State.Climbing) {
+                if (speed.magnitude > 0) {
+                    SoundController.Instance.PlaySound("climbing", 0.1f, 0.8f, false);
+                } else {
+                    SoundController.Instance.StopSound("climbing", 0.1f);
+                }
             }
         }
 
