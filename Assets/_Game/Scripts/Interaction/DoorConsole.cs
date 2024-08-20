@@ -40,17 +40,17 @@ namespace _Game.Scripts.Interaction {
             _opening = true;
             _opened = true;
             SoundController.Instance.PlaySound("door_opening", 0.4f);
+            DOTween.Sequence()
+                .AppendInterval(2.5f)
+                .AppendCallback(() => {
+                    SoundController.Instance.StopSound("door_opening", 0.2f);
+                    SoundController.Instance.PlaySound("door_opened", 0.8f);
+                });
 
-            // DOTween.Sequence()
-            //     .Insert(0, _door.DOLocalRotate(_targetLocalRotation, _time).SetEase(_easing))
-            //     .Insert(0, _door.DOLocalMove(_targetLocalPosition, _time).SetEase(_easing))
-            //     .OnComplete(EndOpening);
             _animator.Play("Open");
         }
 
         public void EndOpening() {
-            SoundController.Instance.StopSound("door_opening", 0.2f);
-            SoundController.Instance.PlaySound("door_opened", 0.8f);
             _opening = false;
         }
     }
