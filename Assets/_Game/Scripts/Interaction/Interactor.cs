@@ -27,7 +27,6 @@ namespace _Game.Scripts.Interaction {
 
         public void Pickup(PickaxePickup pickaxe) {
             SoundController.Instance.PlaySound("key", 0.1f);
-            // TODO sound pickaxe
             _pickupPickaxe?.Invoke();
         }
 
