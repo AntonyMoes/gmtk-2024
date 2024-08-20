@@ -50,11 +50,11 @@ namespace _Game.Scripts.Climbing {
         }
 
         public bool LatchOn() {
-            if (Stamina < _latchOnStamina) {
+            if (Stamina <= 0) {
                 return false;
             }
 
-            Stamina -= _latchOnStamina;
+            Stamina = Mathf.Max(Stamina - _latchOnStamina, 1f);
             ClimbContact = LatchOnContact;
             LatchOnContact = null;
             _animator.LatchOn(ClimbContact);
@@ -68,7 +68,7 @@ namespace _Game.Scripts.Climbing {
                 return;
             }
 
-            Stamina -= deltaTime * _staminaPerSecond;
+            Stamina = Mathf.Max(Stamina - deltaTime * _staminaPerSecond, 0f);
             _animator.Move(movement, ClimbContact);
         }
 

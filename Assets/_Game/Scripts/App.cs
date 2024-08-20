@@ -79,6 +79,11 @@ namespace _Game.Scripts {
         public void FinishLevel() {
             _currentLevel = null;
 
+            var lastCompleted = SaveManager.GetInt(SaveManager.IntData.LastCompletedLevel, -1);
+            if (lastCompleted == -1 || _currentLevelIndex > lastCompleted) {
+                SaveManager.SetInt(SaveManager.IntData.LastCompletedLevel, _currentLevelIndex);
+            }
+
             if (_currentLevelIndex < _levels.Length - 1) {
                 _uiController.LoadingScreen.Show(() => {
                     StartLevel(_levels[_currentLevelIndex + 1]);
